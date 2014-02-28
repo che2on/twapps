@@ -1,0 +1,17 @@
+{
+    "name": "twitterExplorer",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "start": "node app.js"
+    },
+    "dependencies": {
+        "express": "*",
+        "jade": "*",
+        "ntwitter": "*",
+        "socket.io": "*",
+        "oauth": "*",
+        "jasmine-node":"*"
+    },
+    "license": "BSD"
+}

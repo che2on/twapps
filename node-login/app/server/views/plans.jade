@@ -1,0 +1,68 @@
+doctype html
+html
+  head
+    title Bootstrap 101 Template
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    // Bootstrap
+    link(href='dist/css/bootstrap.min.css', rel='stylesheet', media='screen')
+    style(type='text/css')
+      body {
+      padding-top: 70px
+      }
+      ul.list-group.col-lg-4 > li {
+      background-color: #c952ca;
+      color: white;
+      text-align: center;
+      font-size:125%;
+      }
+      ul.list-group.col-lg-4 > li.list-group-item:first-child{
+      background-color: #64086f;
+      font-size: 200%;
+      }
+      .badge {
+      background-color: #FAFAD2;
+      color:#FF8C00;
+      }
+    // HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
+    // WARNING: Respond.js doesn't work if you view the page via file://
+    //if lt IE 9
+      script(src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js')
+      script(src='https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js')
+  body
+    .container
+      .row
+        ul.list-group.col-lg-4
+          li.list-group-item Bronze Package
+          li.list-group-item Realtime replies
+          li.list-group-item Single Login
+          li.list-group-item Forum Support
+          li.list-group-item &dollar;9&sol;Month
+          li.list-group-item
+            a(href='/signup?pack=bronze')
+              button.btn.btn-lg.btn-default Buy Now
+        // second
+        ul.list-group.col-lg-4
+          li.list-group-item
+            | Gold Package
+            span.badge Most Preferred
+          li.list-group-item Realtime replies
+          li.list-group-item Customizable templates
+          li.list-group-item 24X7 Support
+          li.list-group-item &dollar;25&sol;Month
+          li.list-group-item
+            a(href='/signup?pack=gold')
+              button.btn.btn-warning.btn-lg Buy Now
+        // third
+        ul.list-group.col-lg-4
+          li.list-group-item Silver Package
+          li.list-group-item Realtime replies
+          li.list-group-item Customizable templates
+          li.list-group-item limited support
+          li.list-group-item &dollar;15&sol;Month
+          li.list-group-item
+            a(href='/signup?pack=silver')
+              button.btn.btn-lg.btn-default Buy Now
+    // jQuery (necessary for Bootstrap's JavaScript plugins)
+    script(src='https://code.jquery.com/jquery.js')
+    // Include all compiled plugins (below), or include individual files as needed
+    script(src='dist/js/bootstrap.min.js')

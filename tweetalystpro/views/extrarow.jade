@@ -1,0 +1,47 @@
+                .row
+                  div(class="alert alert-warning") Realtime
+                 .row
+                  .col-md-3
+                           h3 Timeline
+                  .col-md-3
+                           h3 Retweets/Favorites
+                  .col-md-3
+                           h3 New Followers
+                  .col-md-3
+                           h3 Direct Messages
+                .row
+                  #realcolumn1.col-md-3(ng-controller='REALReplyController')
+                           div(class="list-group")
+                           div(ng-repeat="t in twitts |  orderBy:'created_at':true ") 
+                              .row
+                                  a(href="#" class="list-group-item ")
+                                      h4(class="list-group-item-heading") {{t.user.screen_name}}
+                                      p(class="list-group-item-text") {{t.text}} 
+                  #realcolumn2.col-md-3(ng-controller='REALFavoriteController')
+                           div(class="list-group")
+                           div(ng-repeat='t in twitts') 
+                              .row
+                                  a(href="#" class="list-group-item ")
+                                    //  h4(class="list-group-item-heading") {{t.source.screen_name}}
+                                    //  p(class="list-group-item-text") {{t.target_object.text}} 
+                                    h4(class="list-group-item-heading") {{t.user.screen_name}}
+                                    p(class="list-group-item-text") {{t.text}}   
+                  #realcolumn3.col-md-3(ng-controller='REALFollowerController')
+                           div(class="list-group")
+                           div(ng-repeat='t in twitts.users') 
+                              .row
+                                  a(href="#" class="list-group-item ")
+                                    // h4(class="list-group-item-heading") {{t.source.screen_name}}
+                                    // p(class="list-group-item-text") {{t.created_at}}   
+                                    h4(class="list-group-item-heading") {{t.screen_name}}
+                                    p(class="list-group-item-text") {{t.description}}  
+                                    img(src="{{t.profile_image_url}}")
+                  #realcolumn4.col-md-3(ng-controller='REALDMController')
+                           div(class="list-group")
+                           div(ng-repeat='t in twitts') 
+                              .row
+                                  a(href="#" class="list-group-item ")
+                                    //  h4(class="list-group-item-heading") {{t.direct_message.sender.screen_name}}
+                                    //  p(class="list-group-item-text") {{t.direct_message.text}} 
+                                    h4(class="list-group-item-heading") {{t.sender.screen_name}}
+                                    p(class="list-group-item-text") {{t.text}} 

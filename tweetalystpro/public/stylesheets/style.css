@@ -1,0 +1,45 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #1ba1e2;
+  color:white;
+}
+
+a {
+  color: #00B7FF;
+}
+
+#column1 {
+            height: 500px;
+            overflow: auto;
+        }
+#column2 {
+            height: 500px;
+            overflow: auto;
+        }
+#column3 {
+            height: 500px;
+            overflow: auto;
+        }
+
+#realcolumn1 {
+            height: 500px;
+            overflow: auto;
+        }
+#realcolumn2 {
+            height: 500px;
+            overflow: auto;
+        }
+#realcolumn3 {
+            height: 500px;
+            overflow: auto;
+        }
+#realcolumn4 {
+            height: 500px;
+            overflow: auto;
+        }
+
+
+.launch-modal {
+    margin: 20px;
+}

@@ -1,0 +1,123 @@
+doctype html
+html(ng-app='proApp')
+    head
+        title= title
+        link(rel='stylesheet', href='/lib/stylesheets/bootstrap.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
+        link(rel='stylesheet', href='/font-awesome/css/font-awesome.css')
+        script(src='/javascripts/socket.io.js')
+        script(src='bower_components/jquery/jquery.js',type='text/javascript')
+        script(src='bower_components/bootstrap/dist/js/bootstrap.min.js',type='text/javascript')
+        script(src='javascripts/jqBootstrapValidation.js' , type='text/javascript')
+        script(src='javascripts/contact_me.js' , type = 'text/javascript')
+        script(src='/javascripts/angular.min.js')
+        script(src='/javascripts/engine.js',type='text/javascript')
+
+        
+        
+
+    body
+        block content
+            nav.navbar.navbar-default(role='navigation')
+              .navbar-header
+                a.navbar-brand(href='#') Tweetalyst Pro
+              div
+                ul.nav.navbar-nav
+                  li.active
+                    a(href='#') Register
+                  li
+                    a(href='#') Sign in
+                  li.dropdown
+                    a.dropdown-toggle(href='#', data-toggle='dropdown')
+                      | Features
+                      b.caret
+                    ul.dropdown-menu
+                      li
+                        a(href='#') Hashtag search
+                      li
+                        a(href='#') Trending topics
+                      li
+                        a(href='#') Influential meter
+                      li.divider
+                      li
+                        a(href='#') Templates hub
+                      li.divider
+                      li
+                        a(href='#') Realtime
+        #wrapper.content
+                .row
+                  .col-md-6
+                           h3 Not attended
+                  .col-md-3
+                           h3 Priority Reply
+                  .col-md-3
+                           h3 Templates
+                .row          
+                  #column1.col-md-6(ng-controller='TweetFeed')
+                           div(class="list-group" style="margin-bottom:0px;")
+                           div(ng-repeat="t in twitts |  orderBy:'created_at':true ") 
+                              .row(ng-click="setMaster(t)")
+                                  a(class="list-group-item" style="height:120px; margin-bottom:5px;" )
+                                      img(ng-src="{{t.user.profile_image_url}}" class="pull-left pull-center" style="margin:20px;")
+                                      button.btn.btn-primary.pull-right(type='submit' class="pull-right pull-center") Reply
+                                      h4(class="list-group-item-heading") {{t.user.screen_name}}
+                                      p(class="list-group-item-text") {{t.text}}   
+
+                                                                
+                  #column2.col-md-3(ng-controller='ReplyController')
+                                  div
+                                          form#contactForm.well(name='userForm', novalidate='novalidate')
+                                            legend Reply
+                                            .control-group
+                                              .controls
+                                                input#name.form-control(type='text', placeholder='username', required='required', data-validation-required-message='Please enter a twitter handle' ng-model='user.name' ng-minlength="0" ng-maxlength="180" value='{{tweet.user.screen_name }}')
+                                                p(ng-show="userForm.user.name.$error.minlength", class="help-block") Username is too short.
+                                                p(ng-show="userForm.user.name.$error.maxlength", class="help-block") Username is too long.
+                                                //p.help-block
+                                            .control-group
+                                              .controls
+                                                textarea#message.form-control(rows='10', cols='100', placeholder='Message', required='required', data-validation-required-message='Please enter your message', minlength='5', data-validation-minlength-message='Min 5 characters', maxlength='999', style='resize: none;' ng-model ='user.message') {{template.template_text}} 
+                                            .control-group
+                                              .controls
+                                                input#replytoid(type='hidden' value='{{tweet.id_str}}' ng-model='user.replytoid')
+                                            #success  
+                                            //
+                                               For success/fail messages 
+                                            button.btn.btn-primary.pull-right(type='submit' ng-click='update(user)') Reply
+                                            br
+                  #column3.col-md-3(ng-controller='Templates')
+                           div(class="list-group" style="margin-bottom:0px;")
+                           div(ng-repeat="t in templates | orderBy:'template_name'") 
+                              .row(ng-click="setTemplate(t)")
+                                  a(class="list-group-item" style="margin-bottom:5px;")
+                                      
+                                      div(class="pull-right")
+                                      h4(class="list-group-item-heading") {{t.template_name}}
+                                      div(class="list-group-item-text" style="overflow: hidden; text-overflow: ellipsis;") {{t.template_text}} 
+                                      div(class="btn-group list-group-item-text" style="height:50px; margin-bottom:5px;")
+                                        button.btn.launch-modal(data-toggle='modal', data-target='#myModal', ng-click="openModal(t)", class="pull-right pull-center") Edit
+                                        button.btn.btn-primary.launch-modal(class="pull-right pull-center") Use
+
+        #myModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true' , style="color:black", ng-controller='ModalController')
+                              .modal-dialog
+                                .modal-content
+                                  .modal-header
+                                    h4#myModalLabel.modal-title{{data.Modal_title}}
+                                    button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+                                  .modal-body
+                                    textarea#textareaID.form-control(ng-model="data.Modal_content")
+                                  .modal-footer
+                                    button.btn.btn-default(type='button', data-dismiss='modal') Close
+                                    button.btn.btn-primary(type='button' ng-click="saveChanges()") Save changes
+
+                                                
+
+   
+
+        audio(id="chatAudio")
+          source(src="sounds/notify.ogg" type="audio/ogg")
+          source(src="sounds/notify.mp3" type="audio/mpeg")
+          source(src="sounds/notify.wav" type="audio/wav")    
+      //  script(src="bower_components/angular/angular.min.js")
+      //  script(src='bower_components/angular-strap/dist/angular-strap.min.js')  
+      //  script(src='bower_components/angular-strap/dist/angular-strap.tpl.min.js')

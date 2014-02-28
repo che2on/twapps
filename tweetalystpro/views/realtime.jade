@@ -1,0 +1,49 @@
+doctype html
+html(ng-app="proApp")
+    head
+        title= title
+        link(rel='stylesheet', href='/lib/stylesheets/bootstrap.css')
+        link(rel='stylesheet', href='/stylesheets/sb-admin.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
+        link(rel='stylesheet', href='/font-awesome/css/font-awesome.css')
+        script(src='/javascripts/angular.min.js')
+        script(src='/javascripts/socket.io.js')
+        script(src='/javascripts/engine.js',type='text/javascript')
+        script(src='bower_components/jquery/jquery.js',type='text/javascript')
+        script(src='bower_components/bootstrap/dist/js/bootstrap.min.js',type='text/javascript')
+    body
+        block content
+        .content
+                .col-md-3(ng-controller='REALReplyController')
+                         h3 All Replies
+                         div(class="list-group")
+                         div(ng-repeat='t in twitts') 
+                            .row
+                                a(href="#" class="list-group-item ")
+                                    h4(class="list-group-item-heading") {{t.user.screen_name}}
+                                    p(class="list-group-item-text") {{t.text}} 
+                .col-md-3(ng-controller='REALFavoriteController')
+                         h3 Favorites
+                         div(class="list-group")
+                         div(ng-repeat='t in twitts') 
+                            .row
+                                a(href="#" class="list-group-item ")
+                                    h4(class="list-group-item-heading") {{t.source.screen_name}}
+                                    p(class="list-group-item-text") {{t.target_object.text}} 
+                .col-md-3(ng-controller='REALFollowerController')
+                         h3 New Followers
+                         div(class="list-group")
+                         div(ng-repeat='t in twitts') 
+                            .row
+                                a(href="#" class="list-group-item ")
+                                    h4(class="list-group-item-heading") {{t.source.screen_name}}
+                                    p(class="list-group-item-text") {{t.created_at}} 
+                .col-md-3(ng-controller='REALDMController')
+                         h3 Direct Messages
+                         div(class="list-group")
+                         div(ng-repeat='t in twitts') 
+                            .row
+                                a(href="#" class="list-group-item ")
+                                    h4(class="list-group-item-heading") {{t.direct_message.sender.screen_name}}
+                                    p(class="list-group-item-text") {{t.direct_message.text}} 
+                

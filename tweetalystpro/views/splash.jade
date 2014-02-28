@@ -1,0 +1,18 @@
+doctype html
+html
+    head
+        title= title
+        link(rel='stylesheet', href='/lib/stylesheets/bootstrap.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
+        script(src='/javascripts/custom.js')
+        script(src='/javascripts/angular.min.js')
+    body
+        block content
+
+        .content(style="text-align:center")
+            img(src='/images/tweetalystprosmall1.png')
+            br
+            p Lexo Systems Private Limited
+
+            #buttonname
+            a(type="submit" class="btn btn-success btn-lg" href="/auth/twitter" ) Login
