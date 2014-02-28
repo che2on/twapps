@@ -70,9 +70,18 @@ proApp.controller('ClickToEditCtrl' , function ClickToEditCtrl($scope)
 });
 
 
+function parseTwitterDate(aDate)
+{ 
+  console.log(aDate);
+  return new Date(Date.parse(aDate.replace(/( \+)/, ' UTC$1')));
+  //sample: Wed Mar 13 09:06:07 +0000 2013 
+}
+
 proApp.controller('TweetFeed', function ($scope, $http, selectionService) 
 {
   $http.get('/mentionmanagement').success(function(data) {
+
+  for(d in data) data[d].created_stamp = parseTwitterDate(data[d].created_at);
   $scope.twitts = data;
   
  });
@@ -83,6 +92,8 @@ proApp.controller('TweetFeed', function ($scope, $http, selectionService)
     socket.on('newTwitt', function (item) 
     {
         console.log("pushing .. "+item);
+        item.created_stamp = parseTwitterDate(item.created_at);
+        console.log(item.created_stamp);
         $scope.twitts.push(item);
         $scope.$apply();
         $('#chatAudio')[0].play();

@@ -55,7 +55,7 @@ html(ng-app='proApp')
                 .row          
                   #column1.col-md-6(ng-controller='TweetFeed')
                            div(class="list-group" style="margin-bottom:0px;")
-                           div(ng-repeat="t in twitts |  orderBy:'created_at':true ") 
+                           div(ng-repeat="t in twitts |  orderBy:'created_stamp':true ") 
                               .row(ng-click="setMaster(t)")
                                   a(class="list-group-item" style="height:120px; margin-bottom:5px;" )
                                       img(ng-src="{{t.user.profile_image_url}}" class="pull-left pull-center" style="margin:20px;")
