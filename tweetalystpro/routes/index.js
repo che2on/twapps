@@ -1,7 +1,7 @@
 /*
  * GET home page.
  */
-
+var AM = require('./modules/sharedLogin');
 var CONSUMER_KEY = "sEORAkR5366d5o9wTfMtmQ";
 var CONSUMER_SECRET = "xwlDEXXpim7yEK69KtRo0C4zh5TR3sQCjBOaCEfwpcQ";
 var SCREEN_NAME = "";
@@ -416,7 +416,26 @@ exports.mentionmanagement = function ( req, res) {
 
 exports.splash = function (req , res)
 {
-    console.log("session is "+req.session.user);
+     if (req.cookies.u == undefined || req.cookies.p == undefined){
+
+            console.log("You are not an authenticated user");
+           // res.render('login', { title: 'Hello - Please Login To Your Account' });
+        }   else{
+                console.log("user is "+req.cookies.u);
+    // attempt automatic login //
+            AM.autoLogin(req.cookies.u, req.cookies.p, function(o){
+                if (o != null){
+                    req.session.user = o;
+                    console.log("You are the man.. here is proof "+o.email);
+                   // res.redirect('/home');
+                }   else{
+                    console.log("Good try .. didnt work! ");
+                    //res.render('login', { title: 'Hello - Please Login To Your Account' });
+                }
+            });
+        }
+
+   // console.log("session is "+req.session.user);
     {
         res.render('splash' , {});
     }
@@ -424,6 +443,9 @@ exports.splash = function (req , res)
 
 
 exports.logout = function(req, res) {
+
+    res.clearCookie('u', { path:'/', domain:'.tweetaly.st'});
+    res.clearCookie('p', { path:'/', domain:'.tweetaly.st'});
     req.session.destroy();
     res.redirect('/');
 };

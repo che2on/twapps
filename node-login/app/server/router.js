@@ -82,6 +82,8 @@ module.exports = function(app) {
 		}	else if (req.param('logout') == 'true'){
 			res.clearCookie('user');
 			res.clearCookie('pass');
+			res.clearCookie('u', { path:'/', domain:'.tweetaly.st'});
+   			res.clearCookie('p', { path:'/', domain:'.tweetaly.st'});
 			req.session.destroy(function(e){ res.send('ok', 200); });
 		}
 	});
