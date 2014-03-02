@@ -1,4 +1,11 @@
 body {
+  padding: 0px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #1ba1e2;
+  color:white;
+}
+
+#wrapper {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   background-color: #1ba1e2;
