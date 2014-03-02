@@ -2,6 +2,7 @@
  * GET home page.
  */
 var AM = require('./modules/sharedLogin');
+var TM = require('./modules/TweetsManager');
 var CONSUMER_KEY = "sEORAkR5366d5o9wTfMtmQ";
 var CONSUMER_SECRET = "xwlDEXXpim7yEK69KtRo0C4zh5TR3sQCjBOaCEfwpcQ";
 var SCREEN_NAME = "";
@@ -476,6 +477,57 @@ function processRealtime(data)
                      io.sockets.emit('repTwitt', data);
                      console.log("emitted");
                 }
+}
+
+function parseTwitterDate(aDate)
+{ 
+  console.log(aDate);
+  return new Date(Date.parse(aDate.replace(/( \+)/, ' UTC$1')));
+  //sample: Wed Mar 13 09:06:07 +0000 2013 
+}
+
+exports.downloadallreplies = function(req, res)
+{
+     var twit = new twitter({
+            consumer_key: CONSUMER_KEY,
+            consumer_secret: CONSUMER_SECRET,
+            access_token_key: req.session.oauth.access_token,
+            access_token_secret: req.session.oauth.access_token_secret
+        });
+
+    var params = {  "count":"200" };
+    
+
+    twit.getMentions(params,function (err, data)
+    {
+         for(d in data) 
+        {
+            data[d].timestamp = +new Date(data[d].created_at);
+            data[d].created_stamp = parseTwitterDate(data[d].created_at);
+        }
+        TM.storeReplies(data, function(o)
+        {
+            console.log(o);
+            res.send(o);
+        });
+
+    });
+
+}
+
+exports.getnewreplies = function(req, res)
+{
+
+
+    TM.getNextSetReplies(req.query.timestamp, function(o)
+    {
+
+        console.log(o);
+        res.send(o);
+
+
+    });
+
 }
 
 

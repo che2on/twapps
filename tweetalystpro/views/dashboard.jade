@@ -12,6 +12,7 @@ html(ng-app='proApp')
         script(src='javascripts/contact_me.js' , type = 'text/javascript')
         script(src='/javascripts/angular.min.js')
         script(src='/javascripts/engine.js',type='text/javascript')
+        script(src='/javascripts/ng-infinite-scroll.js', type='text/javascript')
 
         
         
@@ -53,8 +54,8 @@ html(ng-app='proApp')
                   .col-md-3
                            h3 Templates
                 .row          
-                  #column1.col-md-6(ng-controller='TweetFeed')
-                           div(class="list-group" style="margin-bottom:0px;")
+                  #column1.col-md-6(ng-controller='TweetFeed' when-scrolled="loadImages()")
+                           div(class="list-group" style="margin-bottom:0px;" )
                            div(ng-repeat="t in twitts |  orderBy:'created_stamp':true ") 
                               .row(ng-click="setMaster(t)")
                                   a(class="list-group-item" style="height:120px; margin-bottom:5px;" )

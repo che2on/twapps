@@ -7,7 +7,7 @@
  */
 
 
-var proApp = angular.module('proApp', []);
+var proApp = angular.module('proApp', [] );
 var SCREEN_NAME= "";
 
 proApp.filter('orderObjectBy', function(){
@@ -27,6 +27,39 @@ proApp.filter('orderObjectBy', function(){
     return array;
  }
 });
+
+
+proApp.directive('whenScrolled', function() {
+    return function(scope, elm, attr) {
+        console.log("triggered");
+        var raw = elm[0];
+
+        elm.bind('scroll', function() {
+            if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
+                scope.$apply(attr.whenScrolled);
+            }
+        });
+    };
+});
+
+// angular.module('proApp', []).directive('whenScrolled', function() {
+//     return function(scope, elm, attr) {
+//         var raw = elm[0];
+
+//         var funCheckBounds = function(evt) {
+//             console.log("event fired: " + evt.type);
+//             var rectObject = raw.getBoundingClientRect();
+//             if (rectObject.bottom === window.innerHeight) {
+//                 scope.$apply(attr.whenScrolled);
+//             }
+
+//         };
+        
+//         angular.element(window).bind('scroll load', funCheckBounds);
+        
+        
+//     };
+// });
 
 
 proApp.service('selectionService', function($rootScope) {
@@ -77,11 +110,18 @@ function parseTwitterDate(aDate)
   //sample: Wed Mar 13 09:06:07 +0000 2013 
 }
 
-proApp.controller('TweetFeed', function ($scope, $http, selectionService) 
+var firsttime = 0;
+
+
+proApp.controller('TweetFeed',  function ($scope, $http, selectionService) 
 {
   $http.get('/mentionmanagement').success(function(data) {
 
-  for(d in data) data[d].created_stamp = parseTwitterDate(data[d].created_at);
+  for(d in data) 
+    {
+      data[d].created_stamp = parseTwitterDate(data[d].created_at);
+      data[d].timestamp = +new Date(data[d].created_at);
+    }
   $scope.twitts = data;
   
  });
@@ -93,6 +133,7 @@ proApp.controller('TweetFeed', function ($scope, $http, selectionService)
     {
         console.log("pushing .. "+item);
         item.created_stamp = parseTwitterDate(item.created_at);
+        item.timestamp = +new Date(item.created_at);
         console.log(item.created_stamp);
         $scope.twitts.push(item);
         $scope.$apply();
@@ -115,9 +156,49 @@ proApp.controller('TweetFeed', function ($scope, $http, selectionService)
       //  $scope.$apply();
      }
 
+    
+    $scope.loadImages = function()
+    {
+        if(firsttime==0) {firsttime = 1; return; }
+
+       var lasttweet = $scope.twitts[$scope.twitts.length-1]
+       console.log("load images triggered");
+        $http.get('/getnewreplies?timestamp='+lasttweet.created_at).success(function(data) {
+
+    $scope.twitts = $scope.twitts.concat(data);
+  
+ });
+        // if (in_progress){
+        //     var url = '/api/v1/files.json';
+        //     if ($scope.next_page) {
+        //         url = $scope.next_page;
+        //     }
+        //     $http.get(url).success(function(data) {
+        //         $scope.images = $scope.images.concat(data.items);
+        //         $scope.next_page = data.nextPageInternal;
+
+        //         if (!$scope.next_page) {
+        //             in_progress = false;
+        //         }
+        //     });
+        // }
+    };
+
+    //TweetFeed.$inject = ['$scope', '$http'];
+
+    $scope.loadImages();
+
+
+
+
      $scope.remove = function(tmp)
      {
        
+     }
+
+     $scope.scrollnow = function(tmp)
+     {
+       console.log("....scrolling...... ");
      }
 
      $scope.$on('removeOnReply', function(event, ms)

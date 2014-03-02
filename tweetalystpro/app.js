@@ -43,6 +43,8 @@ app.get('/realdms', routes.realdms);
 app.get('/realfollowers', routes.realfollowers);
 app.get('/realrts', routes.realrts);
 app.get('/openstreams', routes.openstreams);
+app.get('/downloadallreplies', routes.downloadallreplies);
+app.get('/getnewreplies', routes.getnewreplies);
 app.post('/posttweet', function(req, res)
 {
 
