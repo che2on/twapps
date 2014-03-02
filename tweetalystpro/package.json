@@ -11,7 +11,10 @@
         "ntwitter": "*",
         "socket.io": "*",
         "oauth": "*",
-        "jasmine-node":"*"
+        "jasmine-node":"*",
+        "moment":"*",
+        "monk":"*",
+        "mongodb":"*"
     },
     "license": "BSD"
 }
