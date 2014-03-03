@@ -115,16 +115,20 @@ var firsttime = 0;
 
 proApp.controller('TweetFeed',  function ($scope, $http, selectionService) 
 {
-  $http.get('/mentionmanagement').success(function(data) {
+  var currenttime = new Date().getTime();
+  $http.get('/setupunattendedtweets').success(function(data) 
+  {
+        $http.get('/getnextunattendedtweets?time='+currenttime).success(function(data) {
 
-  for(d in data) 
-    {
-      data[d].created_stamp = parseTwitterDate(data[d].created_at);
-      data[d].timestamp = +new Date(data[d].created_at);
-    }
-  $scope.twitts = data;
-  
- });
+        for(d in data)
+        {
+        data[d].time = +new Date(data[d].created_at);
+        data[d].time = ""+data[d].time;
+        }
+        $scope.twitts = data;
+        
+       });
+  });
 
 
     var socket = io.connect('http://pro.tweetaly.st:3001');
@@ -163,11 +167,17 @@ proApp.controller('TweetFeed',  function ($scope, $http, selectionService)
 
        var lasttweet = $scope.twitts[$scope.twitts.length-1]
        console.log("load images triggered");
-        $http.get('/getnewreplies?timestamp='+lasttweet.created_at).success(function(data) {
+        $http.get('/getnextunattendedtweets?time='+lasttweet.time).success(function(data) 
+        {
 
-    $scope.twitts = $scope.twitts.concat(data);
+         //  for(d in data) 
+         //  {
+         //    data[d].created_stamp = parseTwitterDate(data[d].created_at);
+         //    data[d].timestamp = +new Date(data[d].created_at);
+         // }
+        $scope.twitts = $scope.twitts.concat(data);
   
- });
+        });
         // if (in_progress){
         //     var url = '/api/v1/files.json';
         //     if ($scope.next_page) {

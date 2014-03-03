@@ -44,6 +44,9 @@ app.get('/realfollowers', routes.realfollowers);
 app.get('/realrts', routes.realrts);
 app.get('/openstreams', routes.openstreams);
 app.get('/downloadallreplies', routes.downloadallreplies);
+app.get('/downloadallusertweets', routes.downloadallusertweets);
+app.get('/getnextunattendedtweets', routes.getnextunattendedtweets);
+app.get('/setupunattendedtweets', routes.setupunattendedtweets);
 app.get('/getnewreplies', routes.getnewreplies);
 app.post('/posttweet', function(req, res)
 {

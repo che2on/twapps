@@ -18,34 +18,34 @@ html(ng-app='proApp')
         
 
     body
-        nav.navbar.navbar-default(role='navigation')
+        nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
+                      .navbar-header
+                        a.navbar-brand(href='#') Tweetalyst Pro
+                      div
+                        ul.nav.navbar-nav
+                          li.active
+                            a(href='#') Register
+                          li
+                            a(href='#') Sign in
+                          li.dropdown
+                            a.dropdown-toggle(href='#', data-toggle='dropdown')
+                              | Features
+                              b.caret
+                            ul.dropdown-menu
+                              li
+                                a(href='#') Hashtag search
+                              li
+                                a(href='#') Trending topics
+                              li
+                                a(href='#') Influential meter
+                              li.divider
+                              li
+                                a(href='#') Templates hub
+                              li.divider
+                              li
+                                a(href='#') Realtime    
         block content
             
-              .navbar-header
-                a.navbar-brand(href='#') Tweetalyst Pro
-              div
-                ul.nav.navbar-nav
-                  li.active
-                    a(href='#') Register
-                  li
-                    a(href='#') Sign in
-                  li.dropdown
-                    a.dropdown-toggle(href='#', data-toggle='dropdown')
-                      | Features
-                      b.caret
-                    ul.dropdown-menu
-                      li
-                        a(href='#') Hashtag search
-                      li
-                        a(href='#') Trending topics
-                      li
-                        a(href='#') Influential meter
-                      li.divider
-                      li
-                        a(href='#') Templates hub
-                      li.divider
-                      li
-                        a(href='#') Realtime
         #wrapper.content
                 .row
                   .col-md-6
@@ -57,7 +57,7 @@ html(ng-app='proApp')
                 .row          
                   #column1.col-md-6(ng-controller='TweetFeed' when-scrolled="loadImages()")
                            div(class="list-group" style="margin-bottom:0px;" )
-                           div(ng-repeat="t in twitts |  orderBy:'created_stamp':true ") 
+                           div(ng-repeat="t in twitts |  orderBy:'time':true ") 
                               .row(ng-click="setMaster(t)")
                                   a(class="list-group-item" style="height:120px; margin-bottom:5px;" )
                                       img(ng-src="{{t.user.profile_image_url}}" class="pull-left pull-center" style="margin:20px;")
@@ -85,6 +85,7 @@ html(ng-app='proApp')
                                             #success  
                                             //
                                                For success/fail messages 
+                                            br
                                             button.btn.btn-primary.pull-right(type='submit' ng-click='update(user)') Reply
                                             br
                   #column3.col-md-3(ng-controller='Templates')
@@ -97,7 +98,7 @@ html(ng-app='proApp')
                                       h4(class="list-group-item-heading") {{t.template_name}}
                                       div(class="list-group-item-text" style="overflow: hidden; text-overflow: ellipsis;") {{t.template_text}} 
                                       div(class="btn-group list-group-item-text" style="height:50px; margin-bottom:5px;")
-                                        button.btn.launch-modal(data-toggle='modal', data-target='#myModal', ng-click="openModal(t)", class="pull-right pull-center") Edit
+                                        button.btn.btn-primary.launch-modal(data-toggle='modal', data-target='#myModal', ng-click="openModal(t)", class="pull-right pull-center") Edit
                                         button.btn.btn-primary.launch-modal(class="pull-right pull-center") Use
 
         #myModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true' , style="color:black", ng-controller='ModalController')

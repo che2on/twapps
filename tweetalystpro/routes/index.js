@@ -10,6 +10,7 @@ var mongo = require('mongodb');
 var monk  = require('monk');
 var db = monk('localhost:27017/protes');
 var collection; // = db.get('collection');
+var _ = require('underscore')._;
 
 
 var twitter = require('ntwitter');
@@ -500,11 +501,7 @@ exports.downloadallreplies = function(req, res)
 
     twit.getMentions(params,function (err, data)
     {
-         for(d in data) 
-        {
-            data[d].timestamp = +new Date(data[d].created_at);
-            data[d].created_stamp = parseTwitterDate(data[d].created_at);
-        }
+       
         TM.storeReplies(data, function(o)
         {
             console.log(o);
@@ -515,11 +512,194 @@ exports.downloadallreplies = function(req, res)
 
 }
 
+
+exports.downloadallusertweets = function(req, res)
+{
+
+         var twit = new twitter({
+            consumer_key: CONSUMER_KEY,
+            consumer_secret: CONSUMER_SECRET,
+            access_token_key: req.session.oauth.access_token,
+            access_token_secret: req.session.oauth.access_token_secret
+        });
+
+             var twit2 = new twitter({
+            consumer_key: CONSUMER_KEY,
+            consumer_secret: CONSUMER_SECRET,
+            access_token_key: req.session.oauth.access_token,
+            access_token_secret: req.session.oauth.access_token_secret
+        });
+
+    var params = {  "count":"200" };
+
+
+    twit.getUserTimeline(params,function (err, data)
+    {
+
+        var rep_ids = _.pluck(data, 'in_reply_to_status_id_str');
+        console.log(rep_ids);
+        twit2.getMentions(params,function (err, data)
+        {
+
+                for(d in data)
+                { 
+                    if(data[d].id_str!=null)
+                    if(_.contains(rep_ids, data[d].id_str))
+                    {
+                        console.log("attended like  "+data[d].text);
+                        TM.markAsAttended(data[d].id_str, function(o)
+                        {
+
+                        });
+                    }
+                    else
+                    {
+                        TM.markAsUnattended(data[d], function(o)
+                        {
+
+                        });
+
+                      //  console.log("not attended");
+                       // console.log(data[d].id_str+" is not found in "+rep_ids);
+                    }
+                    //if(data[d].id_str)
+                }
+       
+                // TM.storeReplies(data, function(o)
+                // {
+                //     console.log(o);
+                //     res.send(o);
+                // });
+
+        });
+
+
+
+        TM.storeTweets(data, function(o)
+        {
+            console.log(o);
+            res.send(o);
+        });
+
+    });
+    
+
+
+}
+
+
+exports.setupunattendedtweets = function(req, res)
+{
+
+        var unique = req.session.oauth.access_token;
+        unique = unique.substring(unique.length-8, unique.length);
+     var twit = new twitter({
+            consumer_key: CONSUMER_KEY,
+            consumer_secret: CONSUMER_SECRET,
+            access_token_key: req.session.oauth.access_token,
+            access_token_secret: req.session.oauth.access_token_secret
+        });
+
+             var twit2 = new twitter({
+            consumer_key: CONSUMER_KEY,
+            consumer_secret: CONSUMER_SECRET,
+            access_token_key: req.session.oauth.access_token,
+            access_token_secret: req.session.oauth.access_token_secret
+        });
+
+        TM.setCollectionNames(unique,function(o){});
+
+
+    var params = { "count":"200" };
+    var params2 = { "count":"200"};
+
+    twit.getUserTimeline(params,function (err, data)
+    {
+
+
+        //store tweets in db
+        TM.storeTweets(data, function(o)
+        {
+                    console.log(o);
+                    //res.send(o);
+        });
+
+        var rep_ids = _.pluck(data, 'in_reply_to_status_id_str');
+        console.log(rep_ids);
+    
+
+        twit2.getMentions(params2,function (err, data)
+        {
+                //store replies in db
+                TM.storeReplies(data, function(o)
+                {
+                    console.log(o);
+                    //res.send(o);
+                });
+
+                for(d in data)
+                { 
+                    if(data[d].id_str!=null)
+                    if(_.contains(rep_ids, data[d].id_str))
+                    {
+                        console.log("attended like  "+data[d].text);
+                        TM.markAsAttended(data[d].id_str, function(o)
+                        {
+
+                        });
+                    }
+                    else
+                    {
+                        TM.markAsUnattended(data[d], function(o)
+                        {
+
+                        });
+
+                      //  console.log("not attended");
+                       // console.log(data[d].id_str+" is not found in "+rep_ids);
+                    }
+                    //if(data[d].id_str)
+                }
+
+
+                res.send({status:"success"});
+
+
+
+
+
+
+                
+       
+               
+
+        });
+
+
+    });
+
+}
+
+
+
+exports.getnextunattendedtweets = function(req, res)
+{
+
+    TM.getNextUnattended(req.query.time, function(o)
+    {
+
+                    console.log(o);
+                    res.send(o);
+    });
+}
+
+
+
 exports.getnewreplies = function(req, res)
 {
 
 
-    TM.getNextSetReplies(req.query.timestamp, function(o)
+    TM.getNextSetReplies(req.query.time, function(o)
     {
 
         console.log(o);
