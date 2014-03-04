@@ -31,8 +31,8 @@ module.exports = function(app) {
 			}	else{
 			    req.session.user = o;
 				if (req.param('remember-me') == 'true'){
-					res.cookie('user', o.user, { maxAge: 900000 });
-					res.cookie('pass', o.pass, { maxAge: 900000 });
+					res.cookie('user', o.user, {domain:'.tweetaly.st' , maxAge: 900000});
+					res.cookie('pass', o.pass, {domain:'.tweetaly.st' , maxAge: 900000});
 				}
 				// share these cookie values
 					res.cookie('u', o.user, {domain:'.tweetaly.st' , maxAge: 900000});
@@ -49,12 +49,14 @@ module.exports = function(app) {
 	    if (req.session.user == null){
 	// if user is not logged-in redirect back to login page //
 	        res.redirect('/');
-	    }   else{
-			res.render('home', {
-				title : 'Control Panel',
-				countries : CT,
-				udata : req.session.user
-			});
+	    }   else
+	    	{
+			// res.render('home', {
+			// 	title : 'Control Panel',
+			// 	countries : CT,
+			// 	udata : req.session.user
+			// });
+				res.redirect("http://pro.tweetaly.st/auth/twitter")
 	    }
 	});
 	
@@ -73,15 +75,15 @@ module.exports = function(app) {
 					req.session.user = o;
 			// update the user's login cookies if they exists //
 					if (req.cookies.user != undefined && req.cookies.pass != undefined){
-						res.cookie('user', o.user, { maxAge: 900000 });
-						res.cookie('pass', o.pass, { maxAge: 900000 });	
+						res.cookie('user', o.user, {domain:'.tweetaly.st' , maxAge: 900000});
+						res.cookie('pass', o.pass, {domain:'.tweetaly.st' , maxAge: 900000});	
 					}
 					res.send('ok', 200);
 				}
 			});
 		}	else if (req.param('logout') == 'true'){
-			res.clearCookie('user');
-			res.clearCookie('pass');
+			res.clearCookie('user',{ path:'/', domain:'.tweetaly.st'});
+			res.clearCookie('pass',{ path:'/', domain:'.tweetaly.st'});
 			res.clearCookie('u', { path:'/', domain:'.tweetaly.st'});
    			res.clearCookie('p', { path:'/', domain:'.tweetaly.st'});
 			req.session.destroy(function(e){ res.send('ok', 200); });

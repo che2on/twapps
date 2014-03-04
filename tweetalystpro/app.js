@@ -20,7 +20,7 @@ app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('your secret here'));
-app.use(express.session({cookie:{path:'/', httpOnly:true, maxAge:null }}));
+app.use(express.session({cookie:{path:'/'}, secret: 'super-duper-secret-secret'}));
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.session({ secret: "very secret" }));
@@ -48,40 +48,8 @@ app.get('/downloadallusertweets', routes.downloadallusertweets);
 app.get('/getnextunattendedtweets', routes.getnextunattendedtweets);
 app.get('/setupunattendedtweets', routes.setupunattendedtweets);
 app.get('/getnewreplies', routes.getnewreplies);
-app.post('/posttweet', function(req, res)
-{
+app.post('/posttweet',routes.posttweet);
 
-    console.log("request is "+req)
-
-    var name = req.body.name;
-    var message = req.body.message;
-    var replytoid = req.body.replytoid;
-
-    console.log("name is "+req.body.name);
-    console.log("message is "+req.body.message);
-    console.log("reply to id "+req.body.replytoid);
-
-    //extract data like whom to post the tweet from req header
-   
-
-     var twit = new twitter({
-                        consumer_key: "sEORAkR5366d5o9wTfMtmQ",
-                        consumer_secret: "xwlDEXXpim7yEK69KtRo0C4zh5TR3sQCjBOaCEfwpcQ",
-                        access_token_key: req.session.oauth.access_token,
-                        access_token_secret: req.session.oauth.access_token_secret
-                    });
-
-    // res.send("success");
-
-     twit
-
-            .updateStatus(name+" "+message, { in_reply_to_status_id: replytoid }, function (err, data)
-             {
-                 if (err) res.send(err, 500)
-                 else res.send(data)
-             });
-
-});
 //app.get('/users', user.list);
 
 // http.createServer(app).listen(app.get('port'), function () {

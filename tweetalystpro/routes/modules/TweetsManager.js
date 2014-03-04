@@ -14,8 +14,17 @@ var collection = DB.get('replies');
 var tweetscollection = DB.get('tweets');
 var unattendedcollection = DB.get('unattended')
 
-/* establish the database connection */
 
+/* establish the database connection */
+var db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}), {w: 1});
+  db.open(function(e, d){
+  if (e) {
+    console.log(e);
+  } else{
+    console.log('connected to database :: ' + dbName);
+  }
+});
+var accounts = db.collection('accounts');
 
 exports.setCollectionNames = function(unique, callback)
 {
@@ -24,6 +33,35 @@ exports.setCollectionNames = function(unique, callback)
   unattendedcollection = DB.get(unique+'unattended');
   callback({status:"success"});
 }
+
+
+exports.updateReplyCounter = function(newData, callback)
+{
+  accounts.findOne({user:newData.user}, function(e, o){
+      o.replycounter = o.replycounter+1;
+      accounts.save(o, {safe: true}, function(err) {
+        if (err) callback(err);
+        else callback(null, o);
+      });
+   
+  });
+}
+
+
+exports.updatePlan = function(newData, planname, callback)
+{
+    accounts.findOne({user:newData.user}, function(e, o){
+      o.country = newData.country;
+      accounts.save(o, {safe: true}, function(err) {
+        if (err) callback(err);
+        else callback(null, o);
+      });
+   
+  });
+
+
+}
+
 
 
 exports.getNextSetReplies = function(_time, callback)

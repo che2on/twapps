@@ -3,6 +3,7 @@
  */
 var AM = require('./modules/sharedLogin');
 var TM = require('./modules/TweetsManager');
+var PM = require('./modules/PlanManager');
 var CONSUMER_KEY = "sEORAkR5366d5o9wTfMtmQ";
 var CONSUMER_SECRET = "xwlDEXXpim7yEK69KtRo0C4zh5TR3sQCjBOaCEfwpcQ";
 var SCREEN_NAME = "";
@@ -62,7 +63,7 @@ exports.verify = function(req, res)
 }
 exports.index = function (req, res)
  {
-    req.session.destroy();
+   // req.session.destroy();
     res.render('index', { title: 'Express' });
     if (req.session.oauth) {
         var twit = new twitter({
@@ -111,11 +112,29 @@ exports.index = function (req, res)
 };
 
 
+
+
+
 exports.downloadtemplates = function(req, res)
 {
+      console.log("Session is "+req.session);
+      for(a in req.session)
+      {
+        console.log("sess break is "+a);
+      }
+       console.log("Session user  is "+req.session.user);
+        console.log("Session user  is "+req.session.user);
+    console.log("Session user email is "+req.session.user.email);
+
+    PM.configplans();
+    // param country has to be plan
+    PM.gettemplatelimit(req.session.user.country, function(o)
+    { 
+    var templatelimit = o;
     collection = db.get(req.query.screen_name);
-    collection.find( {}, function(err,docs) 
+    collection.find( {},{limit:templatelimit}, function(err,docs) 
     {
+        console.log("Template limit is "+templatelimit);
       console.log("error is"+err);
       console.log(docs);
       var result = [];
@@ -164,6 +183,8 @@ exports.downloadtemplates = function(req, res)
     
    });
 
+});
+
 }
 
 
@@ -183,10 +204,39 @@ exports.updatetemplate = function(req , res )
 
 exports.dashboard = function ( req, res) 
 {
+         if (req.cookies.u == undefined || req.cookies.p == undefined){
+
+            console.log("You are not an authenticated user");
+            res.render('splash' , {dashdata: {}});
+           // res.render('login', { title: 'Hello - Please Login To Your Account' });
+        }   else{
+                console.log("user is "+req.cookies.u);
+    // attempt automatic login //
+            AM.autoLogin(req.cookies.u, req.cookies.p, function(o){
+                if (o != null){
+                    req.session.user = o;
+                    req.session.save();
+                    PM.gettemplatelimit(req.session.user.country, function(o)
+                    { 
+                        var templatelimit = o;
+                        if(req.session.user.replycounter >= templatelimit)
+                        res.render('dashboard' , {dashdata: {planStatus:"expired", planName:req.session.user.country, userName: req.session.user.name}});
+                        else
+                        res.render('dashboard' , {dashdata: {planStatus:"active", planName:req.session.user.country, userName: req.session.user.name}});
+                    }); 
+                }
+                else
+                {
+                    res.render('splash' , {dashdata: {}});
+                    console.log("Good try .. didnt work! ");
+                    //res.render('login', { title: 'Hello - Please Login To Your Account' });
+                }
+            });
+        }
 
    // if(req.query.route=="redirect") { console.log( "it is redirected "); io = require('socket.io').listen(3001, {log: false}); };
 
-    res.render('dashboard' , {});
+    
   //  if (req.session.oauth) 
 
 
@@ -196,6 +246,8 @@ exports.dashboard = function ( req, res)
 
 exports.openstreams = function (req, res) 
 {
+
+
 
         {
         var twit = new twitter({
@@ -418,28 +470,11 @@ exports.mentionmanagement = function ( req, res) {
 
 exports.splash = function (req , res)
 {
-     if (req.cookies.u == undefined || req.cookies.p == undefined){
 
-            console.log("You are not an authenticated user");
-           // res.render('login', { title: 'Hello - Please Login To Your Account' });
-        }   else{
-                console.log("user is "+req.cookies.u);
-    // attempt automatic login //
-            AM.autoLogin(req.cookies.u, req.cookies.p, function(o){
-                if (o != null){
-                    req.session.user = o;
-                    console.log("You are the man.. here is proof "+o.email);
-                   // res.redirect('/home');
-                }   else{
-                    console.log("Good try .. didnt work! ");
-                    //res.render('login', { title: 'Hello - Please Login To Your Account' });
-                }
-            });
-        }
 
    // console.log("session is "+req.session.user);
     {
-        res.render('splash' , {});
+        res.render('splash' , {pageData: {screen_name : ['Tweetalyst']}});
     }
 };
 
@@ -448,6 +483,8 @@ exports.logout = function(req, res) {
 
     res.clearCookie('u', { path:'/', domain:'.tweetaly.st'});
     res.clearCookie('p', { path:'/', domain:'.tweetaly.st'});
+    res.clearCookie('user',{ path:'/', domain:'.tweetaly.st'});
+    res.clearCookie('pass',{ path:'/', domain:'.tweetaly.st'});
     req.session.destroy();
     res.redirect('/');
 };
@@ -620,12 +657,12 @@ exports.setupunattendedtweets = function(req, res)
         //store tweets in db
         TM.storeTweets(data, function(o)
         {
-                    console.log(o);
+                 //   console.log(o);
                     //res.send(o);
         });
 
         var rep_ids = _.pluck(data, 'in_reply_to_status_id_str');
-        console.log(rep_ids);
+       // console.log(rep_ids);
     
 
         twit2.getMentions(params2,function (err, data)
@@ -633,7 +670,7 @@ exports.setupunattendedtweets = function(req, res)
                 //store replies in db
                 TM.storeReplies(data, function(o)
                 {
-                    console.log(o);
+                   // console.log(o);
                     //res.send(o);
                 });
 
@@ -688,7 +725,7 @@ exports.getnextunattendedtweets = function(req, res)
     TM.getNextUnattended(req.query.time, function(o)
     {
 
-                    console.log(o);
+                   // console.log(o);
                     res.send(o);
     });
 }
@@ -702,7 +739,7 @@ exports.getnewreplies = function(req, res)
     TM.getNextSetReplies(req.query.time, function(o)
     {
 
-        console.log(o);
+       // console.log(o);
         res.send(o);
 
 
@@ -776,5 +813,49 @@ exports.realrts = function(req, res)
     }
 
 };
+
+exports.posttweet =  function(req, res)
+{
+
+    console.log("request is "+req)
+
+    var name = req.body.name;
+    var message = req.body.message;
+    var replytoid = req.body.replytoid;
+
+    console.log("name is "+req.body.name);
+    console.log("message is "+req.body.message);
+    console.log("reply to id "+req.body.replytoid);
+
+    //extract data like whom to post the tweet from req header
+   
+
+     var twit = new twitter({
+                        consumer_key: CONSUMER_KEY,
+                        consumer_secret: CONSUMER_SECRET,
+                        access_token_key: req.session.oauth.access_token,
+                        access_token_secret: req.session.oauth.access_token_secret
+                    });
+
+    // res.send("success");
+
+     twit
+
+            .updateStatus(name+" "+message, { in_reply_to_status_id: replytoid }, function (err, data)
+             {
+                 if (err) res.send(err, 500);
+                 else 
+                 {
+                  res.send(data); 
+                  TM.updateReplyCounter(req.session.user,function(err, data)
+                  {
+                    if(data) { console.log("counter incremented")};
+
+                  });
+                 }
+             });
+
+
+}
 
 

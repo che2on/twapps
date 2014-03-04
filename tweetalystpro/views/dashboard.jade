@@ -43,10 +43,32 @@ html(ng-app='proApp')
                                 a(href='#') Templates hub
                               li.divider
                               li
-                                a(href='#') Realtime    
+                                a(href='#') Realtime  
+                      div
+                        ul.nav.navbar-nav.pull-right
+                          li.active
+                            a(href='#') #{dashdata.userName}
+                          li
+                            a(href='#') #{dashdata.planName}
+                          li
+                            a(href='/logout') Sign out  
+
         block content
             
         #wrapper.content
+                if dashdata.planStatus == "expired"
+                  .row
+                    br
+                    .alert.alert-danger.alert-dismissable
+                      button(type="button" class="close" data-dismiss="alert" aria-hidden="true")&times;
+                      <strong>Warning!</strong> Plan limit exceeded.
+                      a(href="http://accounts.tweetaly.st/plans?source=expired" style="color:red") Click here to upgrade
+                else
+                  .row
+                    br
+                    .alert.alert-warning.alert-dismissable
+                      button(type="button" class="close" data-dismiss="alert" aria-hidden="true")&times;
+                      <strong>Tweet Tips!</strong> Be Short and keep your tweets simple.
                 .row
                   .col-md-6
                            h3 Not attended
