@@ -211,6 +211,7 @@ exports.dashboard = function ( req, res)
            // res.render('login', { title: 'Hello - Please Login To Your Account' });
         }   else{
                 console.log("user is "+req.cookies.u);
+                 PM.configplans();
     // attempt automatic login //
             AM.autoLogin(req.cookies.u, req.cookies.p, function(o){
                 if (o != null){
