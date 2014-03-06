@@ -56,7 +56,7 @@ module.exports = function(app) {
 			// 	countries : CT,
 			// 	udata : req.session.user
 			// });
-				res.redirect("http://pro.tweetaly.st/auth/twitter")
+				res.redirect("http://tweetaly.st/auth/twitter")
 	    }
 	});
 	
@@ -92,7 +92,9 @@ module.exports = function(app) {
 	
 // creating new accounts //
 	
-	app.get('/signup', function(req, res) {
+	app.get('/signup', function(req, res) 
+	{
+		console.log("ref id is "+req.session.referral);
 
 		if(req.query.pack == "bronze")
 		res.render('signup', {  title: 'Signup', countries : [{short:"BP" , name:"Bronze Package"} ]});
@@ -105,27 +107,91 @@ module.exports = function(app) {
 	});
 
 
-	app.get('/plans', function(req, res){
+	app.get('/plans', function(req, res)
+	{
+
+		var rid = 0;
+		var aid = 0;
+		if(req.query.aff_id!=null)
+    	{
+    		aid = req.query.aff_id;
+        	req.session.affiliate = { id: req.query.aff_id};
+        	req.session.save();
+    	}
+
+    	if(req.query.ref_id!=null)
+    	{
+        	rid = req.query.ref_id;
+        	req.session.referral = { id: req.query.ref_id};
+        	console.log(req.session.referral);
+        	req.session.save();
+    	}
 
 		res.render('plans', { title: 'Hello - Here are the available plans' });
 	})
 	
-	app.post('/signup', function(req, res){
-		AM.addNewAccount({
-			name 	: req.param('name'),
-			email 	: req.param('email'),
-			user 	: req.param('user'),
-			pass	: req.param('pass'),
-			country : req.param('country'),
-			useragent: req.headers["user-agent"],
-			replycounter:0
-		}, function(e){
-			if (e){
-				res.send(e, 400);
-			}	else{
-				res.send('ok', 200);
+	app.post('/signup', function(req, res)
+	{
+
+		var referralName = "Unknown";
+		var affiliateName = "Unknown";
+
+		AM.getAffiliateName(req.session.affiliate.id, function(e,o)
+		{
+			if(o)
+			{
+			console.log(o);
+			affiliateName = o.name;
 			}
+			else
+			{
+
+			}
+				AM.getReferralName(req.session.referral.id, function(e, o)
+				{
+					if(o)
+					{
+					referralName = o.name;
+					}
+					else
+					{
+
+					}
+
+
+							AM.addNewAccount({
+								name 	: req.param('name'),
+								email 	: req.param('email'),
+								user 	: req.param('user'),
+								pass	: req.param('pass'),
+								country : req.param('country'),
+								useragent: req.headers["user-agent"],
+								replycounter:0,
+								referral: referralName,
+								affiliate: affiliateName,
+								referralid: req.session.referral.id,
+								affiliateid: req.session.affiliate.id
+							}, function(e){
+								if (e){
+									res.send(e, 400);
+								}	else{
+									res.send('ok', 200);
+								}
+							});
+
+
+
+
+
+				});
+
+
 		});
+
+
+		
+
+
 	});
 
 // password reset //
@@ -204,6 +270,101 @@ module.exports = function(app) {
 	    }
 
 	});
+
+	app.get('/admin/affiliates', function(req, res) 
+	{
+
+		if(!req.session.hasOwnProperty("user")){ res.render('404', { title: 'Page Not Found'}); }
+		else
+		{
+		AM.getAdminAccountByEmail(req.session.user.email, function(o){
+			if (o)
+			{
+				AM.getAllAffiliateRecords( function(e, accounts){
+				res.render('affiliatesprint', { title : 'Affilates List', accts : accounts });
+			})
+			}
+			else
+			{
+				res.render('404', { title: 'Page Not Found'});
+				//res.render('print', { title : 'Access Denied', accts: {name:"" , country:"", user: "", date:"", useragent:"", replycounter:""}});
+			}
+		});
+	    }
+
+	});
+
+
+	app.get('/admin/affiliates/signup', function(req, res) 
+	{
+
+	    res.render('affiliatessignup', { title: 'Signup', countries : CT });
+	});
+
+
+	app.get('/admin/referrals/signup', function(req, res) 
+	{
+
+	    res.render('referralsignup', { title: 'Signup', countries : CT });
+	});
+
+
+	app.post('/admin/affiliates/signup', function(req, res){
+		AM.addNewAffiliateAccount({
+			name 	: req.param('name'),
+			organization 	: req.param('organization'),
+			code 	: req.param('code')
+		}, function(e){
+			if (e){
+				res.send(e, 400);
+			}	else{
+				res.send('ok', 200);
+			}
+		});
+	});
+
+	 app.post('/admin/referrals/signup', function(req, res){
+		AM.addNewReferralAccount({
+			name 	: req.param('name'),
+			organization 	: req.param('organization'),
+			code 	: req.param('code')
+		}, function(e){
+			if (e){
+				res.send(e, 400);
+			}	else{
+				res.send('ok', 200);
+			}
+		});
+	});
+
+
+	app.get('/admin/referrals', function(req, res) 
+	{
+
+		if(!req.session.hasOwnProperty("user")){ res.render('404', { title: 'Page Not Found'}); }
+		else
+		{
+		AM.getAdminAccountByEmail(req.session.user.email, function(o){
+			if (o)
+			{
+				AM.getAllReferralRecords( function(e, accounts){
+				res.render('referralsprint', { title : 'Referrals List', accts : accounts });
+			})
+			}
+			else
+			{
+				res.render('404', { title: 'Page Not Found'});
+				//res.render('print', { title : 'Access Denied', accts: {name:"" , country:"", user: "", date:"", useragent:"", replycounter:""}});
+			}
+		});
+	    }
+
+	});
+
+
+
+
+
 	
 	app.post('/delete', function(req, res){
 

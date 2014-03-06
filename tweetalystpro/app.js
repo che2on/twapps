@@ -67,7 +67,7 @@ var oa = new OAuth(
     "sEORAkR5366d5o9wTfMtmQ",
     "xwlDEXXpim7yEK69KtRo0C4zh5TR3sQCjBOaCEfwpcQ",
     "1.0",
-    "http://pro.tweetaly.st/auth/twitter/callback",
+    "http://tweetaly.st/auth/twitter/callback",
     "HMAC-SHA1"
 );
 app.get('/auth/twitter', function(req, res){
@@ -91,7 +91,7 @@ var twitter = require('ntwitter');
 app.get('/auth/twitter/callback', function(req, res, next){
     if (req.session.oauth) {
         req.session.oauth.verifier = req.query.oauth_verifier;
-        var oauth = req.session.oauth;
+        var oauth = req.session.oauth;  
 
         oa.getOAuthAccessToken(oauth.token,oauth.token_secret,oauth.verifier,
             function(error, oauth_access_token, oauth_access_token_secret, results){

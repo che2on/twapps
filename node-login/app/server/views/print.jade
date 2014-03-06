@@ -13,6 +13,10 @@ block content
 					th Account Created
 					th User Agent
 					th Reply Counter
+					th Referral
+					th Affiliate
+					th Ref ID
+					th Aff ID
 			tbody
 			- for (var i = 0; i < accts.length; i++)
 				tr
@@ -23,3 +27,7 @@ block content
 					td= accts[i].date
 					td= accts[i].useragent
 					td= accts[i].replycounter
+					td= accts[i].referral
+					td= accts[i].affiliate
+					td= accts[i].referralid
+					td= accts[i].affiliateid

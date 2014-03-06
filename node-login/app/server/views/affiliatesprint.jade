@@ -1,0 +1,21 @@
+
+extends layout
+
+block content
+	div.container(style='margin:20px')
+		table.table.table-bordered.table-striped
+			thead
+				tr
+					th(style='width:40px') #
+					th(style='width:180px') Name
+					th(style='width:200px') Email
+					th(style='width:180px') Code
+			tbody
+			- for (var i = 0; i < accts.length; i++)
+				tr
+					td= i+1
+					td= accts[i].name
+					td= accts[i].organization
+					td= accts[i].code
+	a(href="/admin/affiliates/signup")
+		button(class="btn"). Add new

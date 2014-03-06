@@ -4,65 +4,102 @@ html
     title Tweetalyst Plans
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     // Bootstrap
-    link(href='undist/css/bootstrap.min.css', rel='stylesheet', media='screen')
+    
+    link(href='css/css-pricing-tables-steel.css', rel='stylesheet')
     style(type='text/css')
-      body {
-      padding-top: 70px
-      }
-      ul.list-group.col-lg-4 > li {
-      background-color: #1ba1e2;
-      color: white;
-      text-align: center;
-      font-size:125%;
-      }
-      ul.list-group.col-lg-4 > li.list-group-item:first-child{
-      background-color: #3355FC;
-      font-size: 200%;
-      }
-      .badge {
-      background-color: #FAFAD2;
-      color:#FF8C00;
+      .content
+      {
+      margin: 10px auto;
+      height: 880px;
+      width: 960px;
+      padding:50px;
       }
     // HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
     // WARNING: Respond.js doesn't work if you view the page via file://
     //if lt IE 9
       script(src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js')
       script(src='https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js')
-  body
-    .container
-      .row
-        ul.list-group.col-lg-4
-          li.list-group-item Bronze Package
-          li.list-group-item 2 Templates
-          li.list-group-item 20 Power Replies
-          li.list-group-item Forum Support
-          li.list-group-item &dollar;90&sol;Month
-          li.list-group-item
-            a(href='/signup?pack=bronze')
-              button.btn.btn-lg.btn-default Buy Now
-        // second
-        ul.list-group.col-lg-4
-          li.list-group-item
-            | Gold Package
-            span.badge Most Preferred
-          li.list-group-item 6 Templates
-          li.list-group-item 100 Power Replies
-          li.list-group-item 24X7 Support
-          li.list-group-item &dollar;250&sol;Month
-          li.list-group-item
-            a(href='/signup?pack=gold')
-              button.btn.btn-warning.btn-lg Buy Now
-        // third
-        ul.list-group.col-lg-4
-          li.list-group-item Silver Package
-          li.list-group-item 5 Templates
-          li.list-group-item 50 Power Replies
-          li.list-group-item limited support
-          li.list-group-item &dollar;105&sol;Month
-          li.list-group-item
-            a(href='/signup?pack=silver')
-              button.btn.btn-lg.btn-default Buy Now
-    // jQuery (necessary for Bootstrap's JavaScript plugins)
-    script(src='https://code.jquery.com/jquery.js')
-    // Include all compiled plugins (below), or include individual files as needed
-    script(src='undist/js/bootstrap.min.js')
+  body(style="background-color:#1ba1e2;")
+    .content
+        ul.pricing-table
+          //
+            li class="extra-info"></li
+          li.icon
+            i.icon-heart
+          li.plan Social Conslt.
+          li.price 89&dollar; /month
+          li.detail
+            span(style='color: #16a085;') ✔
+            | 2 Templates
+          li.detail
+            span(style='color: #16a085;') ✔
+            | 20 Power Replies
+          li.sign-up
+            a(href='/signup?pack=bronze') Sign Up
+        ul.pricing-table.blue
+          //
+            li class="extra-info"></li
+          li.icon
+            i.icon-gift
+          li.plan PR / Agency
+          li.price 229&dollar; /month
+          li.detail
+            span(style='color: #16a085;') ✔
+            | 5 Templates
+          li.detail
+            span(style='color: #16a085;') ✔
+            | 50 Power Replies
+          li.sign-up
+            a(href='/signup?pack=silver')  Sign Up
+        ul.pricing-table.green
+          li.extra-info BEST DEAL
+          li.icon
+            i.icon-glass
+          li.plan Brands
+          li.price 489&dollar; /month
+          li.detail
+            span(style='color: #16a085;') ✔
+            | 10 Templates
+            sup *
+          li.detail
+            span(style='color: #16a085;') ✔
+            | 100 Power Replies
+          li.sign-up
+            a(href='/signup?pack=gold')  Sign Up
+        ul.pricing-table.red
+          li.extra-info
+            i.icon-star
+          li.icon
+            i.icon-briefcase
+          li.plan Enterprise
+          li.price Call us
+          li.detail
+            span(style='color: #16a085;') ✔
+            | Reco. Templates
+            sup *
+          li.detail
+            span(style='color: #16a085;') ✔
+            | Unlimited Power Replies
+          li.detail
+            span(style='color: #16a085;') ✔
+            | Sentiment analysis
+          li.detail
+            span(style='color: #16a085;') ✔
+            | Follower Insights
+          li.detail
+            span(style='color: #16a085;') ✔
+            | Celebrity Factor
+          li.detail
+            span(style='color: #16a085;') ✔
+            | Impact Factor
+          li.detail
+            span(style='color: #16a085;') ✔
+            | Twitter Campaign consulting
+          li.detail
+            span(style='color: #16a085;') ✔
+            | Customized Reports
+          li.detail
+            span(style='color: #16a085;') ✔
+            | Buyer Modeling
+          li.sign-up
+            a(href='http://lexosystems.com')  CONTACT US

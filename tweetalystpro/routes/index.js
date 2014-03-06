@@ -127,12 +127,13 @@ exports.downloadtemplates = function(req, res)
     console.log("Session user email is "+req.session.user.email);
 
     PM.configplans();
+    var templatelimit;
     // param country has to be plan
     PM.gettemplatelimit(req.session.user.country, function(o)
     { 
-    var templatelimit = o;
+    templatelimit = o;
     collection = db.get(req.query.screen_name);
-    collection.find( {},{limit:templatelimit}, function(err,docs) 
+    collection.find( {},{limit:templatelimit, sort:{template_name:1}}, function(err,docs) 
     {
         console.log("Template limit is "+templatelimit);
       console.log("error is"+err);
@@ -167,7 +168,8 @@ exports.downloadtemplates = function(req, res)
                   }
 
 
-                  res.send(default_templates);
+                 // res.send(default_templates);
+                  res.send(_.first(default_templates, templatelimit));
 
         });
 
@@ -471,11 +473,25 @@ exports.mentionmanagement = function ( req, res) {
 
 exports.splash = function (req , res)
 {
+        var rid = 0;
+        var aid = 0;
+        if(req.query.aff_id!=null)
+        {
+            aid = req.query.aff_id;
+            req.session.affiliate = { id: req.query.aff_id};
+            req.session.save();
+        }
 
+        if(req.query.ref_id!=null)
+        {
+            rid = req.query.ref_id;
+            req.session.referral = { id: req.query.ref_id};
+            req.session.save();
+        }
 
    // console.log("session is "+req.session.user);
     {
-        res.render('splash' , {pageData: {screen_name : ['Tweetalyst']}});
+        res.render('splash' , {pageData: {screen_name : ['Tweetalyst']}, ref_id:rid, aff_id:aid});
     }
 };
 

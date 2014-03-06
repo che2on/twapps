@@ -131,7 +131,7 @@ proApp.controller('TweetFeed',  function ($scope, $http, selectionService)
   });
 
 
-    var socket = io.connect('http://pro.tweetaly.st:3001');
+    var socket = io.connect('http://tweetaly.st:3001');
     window.socket = socket;
     socket.on('newTwitt', function (item) 
     {

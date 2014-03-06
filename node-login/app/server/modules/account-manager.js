@@ -20,6 +20,8 @@ var db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}),
 });
 var accounts = db.collection('accounts');
 var adminaccounts = db.collection('adminaccounts');
+var referrals = db.collection('referrals');
+var affiliates = db.collection('affiliates');
 
 /* login validation methods */
 
@@ -74,6 +76,72 @@ exports.addNewAccount = function(newData, callback)
 		}
 	});
 }
+
+
+exports.addNewAffiliateAccount = function(newData, callback)
+{
+	affiliates.findOne({code:newData.code}, function(e, o) {
+		if (o){
+			callback('code-taken');
+		}	else
+		{
+			// append date stamp when record was created //
+			newData.date = moment().format('MMMM Do YYYY, h:mm:ss a');
+			affiliates.insert(newData, {safe: true}, callback);
+			
+		}
+	});
+}
+
+exports.getAffiliateName = function(affcode, callback)
+{
+	console.log("verifying...."+affcode);
+	affiliates.findOne({code:affcode}, function(e, o) {
+		if (o){
+			console.log("o found");
+			callback(null, o);
+		}	else
+		{
+			// append date stamp when record was created //
+			callback(e);
+			
+		}
+	});
+}
+
+exports.getReferralName = function(refcode, callback)
+{
+	referrals.findOne({code:refcode}, function(e, o) {
+		if (o){
+			callback(null, o);
+		}	else
+		{
+			// append date stamp when record was created //
+			callback(e);
+			
+		}
+	});
+}
+
+
+exports.addNewReferralAccount = function(newData, callback)
+{
+	referrals.findOne({code:newData.code}, function(e, o) {
+		if (o){
+			callback('code-taken');
+		}	else
+		{
+			// append date stamp when record was created //
+			newData.date = moment().format('MMMM Do YYYY, h:mm:ss a');
+			referrals.insert(newData, {safe: true}, callback);
+			
+		}
+	});
+}
+
+
+
+
 
 exports.updateAccount = function(newData, callback)
 {
@@ -145,6 +213,28 @@ exports.getAllRecords = function(callback)
 		else callback(null, res)
 	});
 };
+
+
+exports.getAllAffiliateRecords = function(callback)
+{
+	affiliates.find().toArray(
+		function(e, res) {
+		if (e) callback(e)
+		else callback(null, res)
+	});
+};
+
+
+exports.getAllReferralRecords = function(callback)
+{
+	referrals.find().toArray(
+		function(e, res) {
+		if (e) callback(e)
+		else callback(null, res)
+	});
+};
+
+
 
 exports.delAllRecords = function(callback)
 {
