@@ -6,17 +6,58 @@ html
         link(rel='stylesheet', href='/stylesheets/style.css')
         script(src='/javascripts/custom.js')
         script(src='/javascripts/angular.min.js')
+        script(src='lib/javascripts/jquery-1.10.2.js')
+        script(src='lib/javascripts/bootstrap.min.js')
     body
         block content
+        nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
+            .navbar-header
+             a.navbar-brand(href='#') Tweetalyst
+            div
+             ul.nav.navbar-nav.pull-right
+                li.active
+                 a(href='http://accounts.tweetaly.st/plans?aff_id='+aff_id+'&ref_id='+ref_id) Register
+                li
+                 a(href='http://accounts.tweetaly.st') Sign in
 
-        .content(style="text-align:center")
-            img(src='/images/tweetalystprosmall1.png')
+        .container(style="padding-top:80px;")
+              #carousel-example-generic.carousel.slide(data-ride='carousel')
+                //
+                   Indicators 
+                ol.carousel-indicators
+                  li.active(data-target='#carousel-example-generic', data-slide-to='0')
+                  li(data-target='#carousel-example-generic', data-slide-to='1')
+                  li(data-target='#carousel-example-generic', data-slide-to='2')
+                  li(data-target='#carousel-example-generic', data-slide-to='3')
+                  li(data-target='#carousel-example-generic', data-slide-to='4')
+                //
+                   Wrapper for slides 
+                .carousel-inner
+                  .item.active
+                    img(src='images/img1.png', alt='Tweetalyst 1')
+                    .carousel-caption
+                  .item
+                    img(src='images/img2.png', alt='Tweetalyst 2')
+                    .carousel-caption
+                  .item
+                    img(src='images/img3.png', alt='Tweetalyst 3')
+                    .carousel-caption
+                  .item
+                    img(src='images/img4.png', alt='Tweetalyst 4')
+                    .carousel-caption
+                  .item
+                    img(src='images/img5.png', alt='Tweetalyst 5')
+                    .carousel-caption
+
+                a.left.carousel-control(href='#carousel-example-generic', data-slide='prev')
+                  span.glyphicon.glyphicon-chevron-left
+                a.right.carousel-control(href='#carousel-example-generic', data-slide='next')
+                  span.glyphicon.glyphicon-chevron-right
+
+        .content(style="text-align:center; padding:5px;")
             br
-            p Lexo Systems Private Limited
-            a(type="submit" class="btn btn-success btn-lg" href="http://accounts.tweetaly.st" ) Current users click here
+            a(type="submit" class="btn btn-success btn-lg" href="http://tweetaly.st/auth/twitter?aff_id="+aff_id+"&ref_id="+ref_id ) Sign in with twitter account
+            p(style="text-align:right; font-size:small") Lexo Systems Private Limited
             br
             br
-            a(type="submit" class="btn btn-success btn-lg" href="http://accounts.tweetaly.st/plans?aff_id="+aff_id+"&ref_id="+ref_id ) New users signup here
-            br
-            br
-           
+                   

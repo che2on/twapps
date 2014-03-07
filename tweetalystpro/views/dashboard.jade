@@ -23,10 +23,6 @@ html(ng-app='proApp')
                         a.navbar-brand(href='#') Tweetalyst Pro
                       div
                         ul.nav.navbar-nav
-                          li.active
-                            a(href='#') Register
-                          li
-                            a(href='#') Sign in
                           li.dropdown
                             a.dropdown-toggle(href='#', data-toggle='dropdown')
                               | Features
@@ -59,16 +55,26 @@ html(ng-app='proApp')
                 if dashdata.planStatus == "expired"
                   .row
                     br
-                    .alert.alert-danger.alert-dismissable
-                      button(type="button" class="close" data-dismiss="alert" aria-hidden="true")&times;
-                      <strong>Warning!</strong> Plan limit exceeded.
-                      a(href="http://accounts.tweetaly.st/plans?source=expired" style="color:red") Click here to upgrade
+                    #messagebox
+                     .alert.alert-danger.alert-dismissable
+                        button(type="button" class="close" data-dismiss="alert" aria-hidden="true")&times;
+                        <strong>Warning!</strong> Plan limit exceeded.
+                        a(href="http://accounts.tweetaly.st/plans?source=expired" style="color:red") Click here to upgrade
+                if dashdata.planStatus == "free"
+                  .row
+                    br
+                    #messagebox
+                     .alert.alert-warning.alert-dismissable
+                        button(type="button" class="close" data-dismiss="alert" aria-hidden="true")&times;
+                        <strong>Howdy!</strong> You have #{dashdata.repliesremaining} Power replies remaining!
+                        a(href="http://accounts.tweetaly.st/plans?source=expired" style="color:red") Upgrade for more.
                 else
                   .row
                     br
-                    .alert.alert-warning.alert-dismissable
-                      button(type="button" class="close" data-dismiss="alert" aria-hidden="true")&times;
-                      <strong>Tweet Tips!</strong> Be Short and keep your tweets simple.
+                    #messagebox
+                     .alert.alert-warning.alert-dismissable
+                       button(type="button" class="close" data-dismiss="alert" aria-hidden="true")&times;
+                       <strong>Tweet Tips!</strong> Be Short and keep your tweets simple.
                 .row
                   .col-md-6
                            h3 Not attended
@@ -122,6 +128,16 @@ html(ng-app='proApp')
                                       div(class="btn-group list-group-item-text" style="height:50px; margin-bottom:5px;")
                                         button.btn.btn-primary.launch-modal(data-toggle='modal', data-target='#myModal', ng-click="openModal(t)", class="pull-right pull-center") Edit
                                         button.btn.btn-primary.launch-modal(class="pull-right pull-center") Use
+                           if dashdata.planStatus == "free"
+                              .row
+                                  a(class="list-group-item" style="margin-bottom:5px;")
+                                      
+                                      div(class="pull-right")
+                                      h4(class="list-group-item-heading") Pro templates
+                                      div(class="list-group-item-text" style="overflow: hidden; text-overflow: ellipsis;") Tailor made templates for social media consultants. Want one?
+                                       br
+                                       br 
+                                       button.btn.btn-success(class="pull-left" href="http://accounts.tweetaly.st/plans" onclick="window.location='http://accounts.tweetaly.st/plans'" ) Upgrade
 
         #myModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true' , style="color:black", ng-controller='ModalController')
                               .modal-dialog
@@ -146,3 +162,4 @@ html(ng-app='proApp')
       //  script(src="bower_components/angular/angular.min.js")
       //  script(src='bower_components/angular-strap/dist/angular-strap.min.js')  
       //  script(src='bower_components/angular-strap/dist/angular-strap.tpl.min.js')
+ 

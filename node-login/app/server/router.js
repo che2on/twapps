@@ -56,7 +56,7 @@ module.exports = function(app) {
 			// 	countries : CT,
 			// 	udata : req.session.user
 			// });
-				res.redirect("http://tweetaly.st/auth/twitter")
+				res.redirect("http://tweetaly.st/pro")
 	    }
 	});
 	

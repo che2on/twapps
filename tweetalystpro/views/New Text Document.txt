@@ -1,0 +1,54 @@
+doctype html
+html(ng-app='proApp')
+    head
+        title= title
+        link(rel='stylesheet', href='/lib/stylesheets/bootstrap.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
+        link(rel='stylesheet', href='/font-awesome/css/font-awesome.css')
+        script(src='/javascripts/socket.io.js')
+        script(src='bower_components/jquery/jquery.js',type='text/javascript')
+        script(src='bower_components/bootstrap/undist/js/bootstrap.min.js',type='text/javascript')
+        script(src='javascripts/jqBootstrapValidation.js' , type='text/javascript')
+        script(src='javascripts/contact_me.js' , type = 'text/javascript')
+        script(src='/javascripts/angular.min.js')
+        script(src='/javascripts/engine.js',type='text/javascript')
+        script(src='/javascripts/ng-infinite-scroll.js', type='text/javascript')
+
+        
+        
+
+    body
+        nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
+                      .navbar-header
+                        a.navbar-brand(href='#') Tweetalyst Pro
+                      div
+                        ul.nav.navbar-nav
+                          li.active
+                            a(href='#') 
+                          li
+                            a(href='#') 
+                          li.dropdown
+                            a.dropdown-toggle(href='#', data-toggle='dropdown')
+                              | Features
+                              b.caret
+                            ul.dropdown-menu
+                              li
+                                a(href='#') Hashtag search
+                              li
+                                a(href='#') Trending topics
+                              li
+                                a(href='#') Influential meter
+                              li.divider
+                              li
+                                a(href='#') Templates hub
+                              li.divider
+                              li
+                                a(href='#') Realtime  
+                      div
+                        ul.nav.navbar-nav.pull-right
+                          li.active
+                            a(href='#') #{dashdata.userName}
+                          li
+                            a(href='#') #{dashdata.planName}
+                          li
+                            a(href='/logout') Sign out  

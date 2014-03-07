@@ -9,6 +9,7 @@
 
 var proApp = angular.module('proApp', [] );
 var SCREEN_NAME= "";
+var free_templates=5;
 
 proApp.filter('orderObjectBy', function(){
  return function(input, attribute) {
@@ -375,6 +376,14 @@ proApp.controller('ReplyController', function($scope,$http,selectionService)
           .append('</div>');
         $('#contactForm').trigger("reset");
            // success
+                       $('#messagebox').empty();
+                      $('#messagebox').html("<div class='alert alert-danger'>");
+                     $('#messagebox > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
+                      .append( "</button>");
+                     $('#messagebox > .alert-danger').append("<strong>You have ");
+                     $('#messagebox > .alert-danger').append(free_templates-response.data.replycounter)
+                     $('#messagebox > .alert-danger').append(" Power replies remaining!</strong>");
+                     $('#messagebox > .alert-danger').append('</div>');
 
         }, 
         function(response)
@@ -388,6 +397,9 @@ proApp.controller('ReplyController', function($scope,$http,selectionService)
                      $('#success > .alert-danger').append('</div>');
                  //clear all fields
                  $('#contactForm').trigger("reset");
+
+
+
         }
     );
 

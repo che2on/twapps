@@ -8,6 +8,8 @@ var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
 
+var AM = require('./supermodules/account-manager');
+
 var app = express();
 var SCREEN_NAME = "";
 
@@ -49,6 +51,7 @@ app.get('/getnextunattendedtweets', routes.getnextunattendedtweets);
 app.get('/setupunattendedtweets', routes.setupunattendedtweets);
 app.get('/getnewreplies', routes.getnewreplies);
 app.post('/posttweet',routes.posttweet);
+app.get('/pro', routes.pro);
 
 //app.get('/users', user.list);
 
@@ -70,7 +73,26 @@ var oa = new OAuth(
     "http://tweetaly.st/auth/twitter/callback",
     "HMAC-SHA1"
 );
-app.get('/auth/twitter', function(req, res){
+app.get('/auth/twitter', function(req, res)
+{
+        var aid = 0;
+        var rid = 0;
+
+        if(req.query.aff_id!=null)
+        {
+            aid = req.query.aff_id;
+            req.session.affiliate = { id: req.query.aff_id};
+            req.session.save();
+        }
+
+        if(req.query.ref_id!=null)
+        {
+            rid = req.query.ref_id;
+            req.session.referral = { id: req.query.ref_id};
+            req.session.save();
+        }
+
+
     oa.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results){
         if (error) {
             console.log(error);
@@ -89,6 +111,10 @@ app.get('/auth/twitter', function(req, res){
 
 var twitter = require('ntwitter');
 app.get('/auth/twitter/callback', function(req, res, next){
+
+
+    // write some code for paid users........
+
     if (req.session.oauth) {
         req.session.oauth.verifier = req.query.oauth_verifier;
         var oauth = req.session.oauth;  
@@ -112,13 +138,12 @@ app.get('/auth/twitter/callback', function(req, res, next){
 
 
                     twit
-                        .verifyCredentials(function (err, data) {
+                        .verifyCredentials(function (err, data) 
+                        {
+                            guestSignup(req, res, data.screen_name);
                             console.log(err,data);
                             console.log("In app.js ");
-                    });
-
-                    res.redirect('/openstreams');
-                       
+                    });                       
 
                 }
             }
@@ -126,3 +151,97 @@ app.get('/auth/twitter/callback', function(req, res, next){
     } else
         next(new Error("you're not supposed to be here."))
 });
+
+
+
+function guestSignup(req, res, screen_name)
+{
+
+        var referralName = "Unknown";
+        var affiliateName = "Unknown";
+
+        AM.getAffiliateName(req.session.affiliate.id, function(e,o)
+        {
+            if(o)
+            {
+            console.log(o);
+            affiliateName = o.name;
+            }
+            else
+            {
+
+            }
+                AM.getReferralName(req.session.referral.id, function(e, o)
+                {
+                    if(o)
+                    {
+                    referralName = o.name;
+                    }
+                    else
+                    {
+
+                    }
+
+
+                            AM.addNewAccount({
+                                name    : screen_name,
+                                email   : screen_name+"@tweetaly.st",
+                                user    : "guest_"+screen_name,
+                                pass    : "whateverittakes",
+                                country : "Free Package",
+                                useragent: req.headers["user-agent"],
+                                replycounter:0,
+                                referral: referralName,
+                                affiliate: affiliateName,
+                                referralid: req.session.referral.id,
+                                affiliateid: req.session.affiliate.id
+                            }, function(e){
+                                if (e)
+                                {
+                                    guestLogin(req, res, screen_name);
+                                   // res.send(e, 400);
+                                }    
+                                else
+                                {
+                                    guestLogin(req, res, screen_name);
+                                   // res.send('ok', 200);
+                                }
+                            });
+
+
+
+
+
+                });
+
+
+        });
+
+
+
+
+}
+
+
+
+function guestLogin(req, res, screen_name)
+{
+
+        AM.manualLogin("guest_"+screen_name, "whateverittakes", function(e, o){
+            if (!o){
+                res.send(e, 400);
+            }   else{
+                req.session.user = o;
+                if (req.param('remember-me') == 'true'){
+                    res.cookie('user', o.user, {domain:'.tweetaly.st' , maxAge: 900000});
+                    res.cookie('pass', o.pass, {domain:'.tweetaly.st' , maxAge: 900000});
+                }
+                // share these cookie values
+                    res.cookie('u', o.user, {domain:'.tweetaly.st' , maxAge: 900000});
+                    res.cookie('p', o.pass, {domain:'.tweetaly.st' , maxAge: 900000});
+                    res.redirect('/openstreams');
+                 //res.send(o, 200);
+            }
+        });
+   
+}

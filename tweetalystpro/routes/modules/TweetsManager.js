@@ -47,6 +47,13 @@ exports.updateReplyCounter = function(newData, callback)
   });
 }
 
+exports.getReplyCounter = function(newData, callback)
+{
+  accounts.findOne({user:newData.user}, function(e,o) {
+    
+
+  })
+}
 
 exports.updatePlan = function(newData, planname, callback)
 {

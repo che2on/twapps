@@ -204,9 +204,46 @@ exports.updatetemplate = function(req , res )
 }
 
 
+
+exports.pro = function(req , res)
+{
+
+       if (req.cookies.u == undefined || req.cookies.p == undefined) // if not signed up users...
+       {
+
+            console.log("You are not an authenticated user");
+            res.render('splash' , {dashdata: {}});
+           // res.render('login', { title: 'Hello - Please Login To Your Account' });
+        }   
+        else
+        {
+
+            AM.autoLogin(req.cookies.u, req.cookies.p, function(o)
+            {
+                if (o != null)
+                {
+                    req.session.user = o;
+                    req.session.save();
+                    res.render('pro' , {dashdata: {planStatus:"active", planName:req.session.user.country, userName: req.session.user.name}});
+                }
+                else
+                {
+
+
+                }
+            });
+        }
+
+
+}
+
+
 exports.dashboard = function ( req, res) 
 {
-         if (req.cookies.u == undefined || req.cookies.p == undefined){
+
+
+         if (req.cookies.u == undefined || req.cookies.p == undefined) // if not signed up users...
+         {
 
             console.log("You are not an authenticated user");
             res.render('splash' , {dashdata: {}});
@@ -222,10 +259,32 @@ exports.dashboard = function ( req, res)
                     PM.gettemplatelimit(req.session.user.country, function(o)
                     { 
                         var templatelimit = o;
-                        if(req.session.user.replycounter >= templatelimit)
-                        res.render('dashboard' , {dashdata: {planStatus:"expired", planName:req.session.user.country, userName: req.session.user.name}});
+                        var max_replycount;
+                        PM.getreplycountlimit(req.session.user.country, function(o)
+                        {
+                        max_replycount =o;
+                        var remaining_replies = max_replycount - req.session.user.replycounter;
+                        // if(remaining_replies == 0)
+                        // {
+                        //     // dont show them anything...
+                        // }
+                        if(req.session.user.country == "Free Package")
+                        {
+                                res.render('dashboard' , {dashdata: {planStatus:"free", planName:req.session.user.country, userName: req.session.user.name, repliesremaining:remaining_replies}});
+
+                        }
                         else
-                        res.render('dashboard' , {dashdata: {planStatus:"active", planName:req.session.user.country, userName: req.session.user.name}});
+                        {
+                                if(req.session.user.replycounter >= templatelimit)
+                                res.render('dashboard' , {dashdata: {planStatus:"expired", planName:req.session.user.country, userName: req.session.user.name}});
+                                else
+                                res.render('dashboard' , {dashdata: {planStatus:"active", planName:req.session.user.country, userName: req.session.user.name}});
+                        }
+
+
+                        });
+
+
                     }); 
                 }
                 else
@@ -252,118 +311,118 @@ exports.openstreams = function (req, res)
 
 
 
-        {
-        var twit = new twitter({
-            consumer_key: CONSUMER_KEY,
-            consumer_secret: CONSUMER_SECRET,
-            access_token_key: req.session.oauth.access_token,
-            access_token_secret: req.session.oauth.access_token_secret
-        });
+  //       {
+  //       var twit = new twitter({
+  //           consumer_key: CONSUMER_KEY,
+  //           consumer_secret: CONSUMER_SECRET,
+  //           access_token_key: req.session.oauth.access_token,
+  //           access_token_secret: req.session.oauth.access_token_secret
+  //       });
 
-        // twit
-        //     .verifyCredentials(function (err, data) {
-        //         console.log(err, data);
-        //         SCREEN_NAME = data.screen_name;
-        //     });
+  //       // twit
+  //       //     .verifyCredentials(function (err, data) {
+  //       //         console.log(err, data);
+  //       //         SCREEN_NAME = data.screen_name;
+  //       //     });
             
 
 
-        // twit.stream(
-        //     'statuses/filter',
-        //     {track: ['vodafoneIN', 'vodafone india', 'vodafone karnataka', 'vodafone', ]},
-        //     function (stream)
-        //      {
-        //         console.log("stream is"+stream);
+  //       // twit.stream(
+  //       //     'statuses/filter',
+  //       //     {track: ['vodafoneIN', 'vodafone india', 'vodafone karnataka', 'vodafone', ]},
+  //       //     function (stream)
+  //       //      {
+  //       //         console.log("stream is"+stream);
 
-        //         stream.on('data', function (data) {
-        //             //console.log(data);
-        //             //console.log(data.user.screen_name + " : " + data.text);
-        //             io.sockets.emit('newTwitt', data);
-        //             // throw  new Exception('end');
-        //         });
-        //     }
-        // );
+  //       //         stream.on('data', function (data) {
+  //       //             //console.log(data);
+  //       //             //console.log(data.user.screen_name + " : " + data.text);
+  //       //             io.sockets.emit('newTwitt', data);
+  //       //             // throw  new Exception('end');
+  //       //         });
+  //       //     }
+  //       // );
 
 
-        var count = 0;
+  //       var count = 0;
 
-       // io.sockets.clients().forEach(function (socket) { console.log("socket found!!!!!! "); socket.destroy });
+  //      // io.sockets.clients().forEach(function (socket) { console.log("socket found!!!!!! "); socket.destroy });
 
-        twit
+  //       twit
 
-            .stream('user',{}, 
-            function (stream) 
-            {
+  //           .stream('user',{}, 
+  //           function (stream) 
+  //           {
 
-               // twit.currentTwitStream = stream;
-                //stream.destroy;
-                stream.on('data', function (data)
-                 {
+  //              // twit.currentTwitStream = stream;
+  //               //stream.destroy;
+  //               stream.on('data', function (data)
+  //                {
 
-                     count++;
-                     console.log("stream number is "+count);
+  //                    count++;
+  //                    console.log("stream number is "+count);
 
-                    //console.log(data);
-                    //console.log(data.user.screen_name + " : " + data.text);
-                    processRealtime(data);
-                    if(data.hasOwnProperty("entities"))
-                    if(data.entities.hasOwnProperty("user_mentions"))
-                    {
-                    console.log("data.entities.user_mentions.screen_name "+data.entities.user_mentions);
-                //    console.log("no 1... is "+data.entities.user_mentions[0].screen_name);
-                   // console.log("no 1... is "+)
+  //                   //console.log(data);
+  //                   //console.log(data.user.screen_name + " : " + data.text);
+  //                   processRealtime(data);
+  //                   if(data.hasOwnProperty("entities"))
+  //                   if(data.entities.hasOwnProperty("user_mentions"))
+  //                   {
+  //                   console.log("data.entities.user_mentions.screen_name "+data.entities.user_mentions);
+  //               //    console.log("no 1... is "+data.entities.user_mentions[0].screen_name);
+  //                  // console.log("no 1... is "+)
 
-                    var found = 0;
-                    console.log("actual screen name is "+SCREEN_NAME);
+  //                   var found = 0;
+  //                   console.log("actual screen name is "+SCREEN_NAME);
 
-                    for(var i=0; i<data.entities.user_mentions.length; i++)
-                    {
-                        console.log("mentioned name is "+data.entities.user_mentions[i].screen_name);
-                        if(data.entities.user_mentions[i].screen_name == SCREEN_NAME)
-                        found=1;
+  //                   for(var i=0; i<data.entities.user_mentions.length; i++)
+  //                   {
+  //                       console.log("mentioned name is "+data.entities.user_mentions[i].screen_name);
+  //                       if(data.entities.user_mentions[i].screen_name == SCREEN_NAME)
+  //                       found=1;
                       
-                    }
+  //                   }
 
-                    if(found==1) io.sockets.emit('newTwitt', data);
+  //                   if(found==1) io.sockets.emit('newTwitt', data);
 
-                    }
+  //                   }
 
-                     io.sockets.clients().forEach(function (socket) { console.log("socket found!!!!!! ") }); //socket.destroy });
-                    // throw  new Exception('end');
-                });
+  //                    io.sockets.clients().forEach(function (socket) { console.log("socket found!!!!!! ") }); //socket.destroy });
+  //                   // throw  new Exception('end');
+  //               });
 
-                  stream.on('end', function (response) {
-    // Handle a disconnection
-  });
-  stream.on('destroy', function (response) {
-    // Handle a 'silent' disconnection from Twitter, no end/error event fired
-  });
-
-
-        //setTimeout(stream.destroy, 55000);
-
-            }
-            );
+  //                 stream.on('end', function (response) {
+  //   // Handle a disconnection
+  // });
+  // stream.on('destroy', function (response) {
+  //   // Handle a 'silent' disconnection from Twitter, no end/error event fired
+  // });
 
 
-        // twit
-        //     .getMentions('', function(err, data)
-        //  {
-        //     console.log(err);
-        //     console.log(data);
-        //     console.log("inside mentions");
-        //     for(var key in data)
-        //     {
-        //                         console.log(data[key]+"data...........................");
-        //                         var attrName = key;
-        //                         var attrValue = data[key];
-        //                         info = { "text":attrValue.text , user:{"screen_name":attrValue.user.screen_name} };
-        //                         io.sockets.emit('newTwitt', info); //rest
-        //                       //  console.log(attrValue);
+  //       //setTimeout(stream.destroy, 55000);
 
-        //     }
-        // });
-    }
+  //           }
+  //           );
+
+
+  //       // twit
+  //       //     .getMentions('', function(err, data)
+  //       //  {
+  //       //     console.log(err);
+  //       //     console.log(data);
+  //       //     console.log("inside mentions");
+  //       //     for(var key in data)
+  //       //     {
+  //       //                         console.log(data[key]+"data...........................");
+  //       //                         var attrName = key;
+  //       //                         var attrValue = data[key];
+  //       //                         info = { "text":attrValue.text , user:{"screen_name":attrValue.user.screen_name} };
+  //       //                         io.sockets.emit('newTwitt', info); //rest
+  //       //                       //  console.log(attrValue);
+
+  //       //     }
+  //       // });
+  //   }
 
 
     res.redirect("/dashboard");
@@ -858,15 +917,21 @@ exports.posttweet =  function(req, res)
 
      twit
 
-            .updateStatus(name+" "+message, { in_reply_to_status_id: replytoid }, function (err, data)
+            .updateStatus(name+" "+message, { in_reply_to_status_id: replytoid }, function (err, twtdata)
              {
                  if (err) res.send(err, 500);
                  else 
                  {
-                  res.send(data); 
+                 
                   TM.updateReplyCounter(req.session.user,function(err, data)
                   {
-                    if(data) { console.log("counter incremented")};
+                    if(data) 
+                        { 
+                            console.log("counter incremented "+data.replycounter);
+                             twtdata.replycounter = data.replycounter;
+                             res.send(twtdata); 
+
+                        };
 
                   });
                  }

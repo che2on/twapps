@@ -50,3 +50,8 @@ a {
 .launch-modal {
     margin: 20px;
 }
+
+.carousel-inner>.item>img {
+margin: 0 auto;
+height: 500px;
+}
