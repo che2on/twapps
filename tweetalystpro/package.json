@@ -14,7 +14,8 @@
         "jasmine-node":"*",
         "moment":"*",
         "monk":"*",
-        "mongodb":"*"
+        "mongodb":"*",
+        "underscore":"*"
     },
     "license": "BSD"
 }
