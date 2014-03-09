@@ -19,6 +19,8 @@ html
                  a(href='http://accounts.tweetaly.st/plans?aff_id='+aff_id+'&ref_id='+ref_id) Register
                 li
                  a(href='http://accounts.tweetaly.st') Sign in
+                li
+                 a(href='mailto:support@tweetaly.st') Contact support@tweetaly.st
 
         .container(style="padding-top:80px;")
               #carousel-example-generic.carousel.slide(data-ride='carousel')
@@ -56,7 +58,57 @@ html
 
         .content(style="text-align:center; padding:5px;")
             br
-            a(type="submit" class="btn btn-success btn-lg" href="http://tweetaly.st/auth/twitter?aff_id="+aff_id+"&ref_id="+ref_id ) Sign in with twitter account
-            p(style="text-align:right; font-size:small") Lexo Systems Private Limited
-            br
-            br                
+            a(type="submit" class="btn btn-success btn-lg" onclick="terms("+aff_id+","+ref_id+")" ) Start your 30 day free trial by Sign in with twitter account
+            div
+               input(id="termsbox" type='checkbox' checked='checked' style="text-align:center" class="large") 
+               &nbsp; I Agree to 
+               a(style="color:#ffffff", href="#terms" , class="termsclass" , onclick="showAgreement()") 
+                |  Terms and Conditions. 
+            p(style="text-align:right; font-size:small") 
+              a(href="#" style="color:white" onclick="showContactModal()") Contact 
+              |  | 
+              a(href="http://tweetaly.st/tos" style="color:white") Terms of Service
+              |  | 
+              a(href="http://tweetaly.st/privacy" style="color:white") Privacy
+              |  |  Lexo Systems Private Limited
+            br 
+
+        #myModal2.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true' , style="color:black", ng-controller='ModalController')
+                              .modal-dialog
+                                .modal-content
+                                  .modal-header
+                                    h4#myModalLabel.modal-title Terms and Conditions
+                                    button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+                                  .modal-body
+                                    | You have to read and agree to terms of service and privacy policy present at 
+                                    a(href="http://tweetaly.st/tos") tweetaly.st/tos
+                                    |  and  
+                                    a(href="http://tweetaly.st/privacy") tweetaly.st/privacy
+                                  .modal-footer
+                                    button.btn.btn-default(type='button', data-dismiss='modal') Close
+        #myModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true' , style="color:black", ng-controller='ModalController')
+                              .modal-dialog
+                                .modal-content
+                                  .modal-header
+                                    h4#myModalLabel.modal-title Terms and Conditions
+                                    button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+                                  .modal-body
+                                    | Read the full terms of service here: 
+                                    a(href="http://tweetaly.st/tos")  tweetaly.st/tos
+                                    br
+                                    | Read the full privacy policy here.  
+                                    a(href="http://tweetaly.st/privacy")  tweetaly.st/privacy
+                                    br
+                                  .modal-footer
+                                    button.btn.btn-default(type='button', data-dismiss='modal') Close
+        #myContactModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true' , style="color:black", ng-controller='ModalController')
+                              .modal-dialog
+                                .modal-content
+                                  .modal-header
+                                    h4#myModalLabel.modal-title Contact us
+                                    button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+                                  .modal-body
+                                    | For any queries or feedback drop us an email to support@tweetaly.st 
+                                    br
+                                  .modal-footer
+                                    button.btn.btn-default(type='button', data-dismiss='modal') Close

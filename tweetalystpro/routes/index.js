@@ -238,6 +238,17 @@ exports.pro = function(req , res)
 }
 
 
+exports.tos = function ( req, res )
+{
+  res.render('tos' , { } );
+}
+
+exports.privacy = function ( req, res )
+{
+  res.render('privacy', { });
+}
+
+
 exports.dashboard = function ( req, res) 
 {
 
