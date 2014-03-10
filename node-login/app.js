@@ -8,6 +8,7 @@
 var express = require('express');
 var http = require('http');
 var app = express();
+var path = require('path');
 
 app.configure(function(){
 	//app.set('port', 8080);
@@ -22,6 +23,7 @@ app.configure(function(){
 	app.use(express.methodOverride());
 //	app.use(require('stylus').middleware({ src: __dirname + '/app/public' }));
 	app.use(express.static(__dirname + '/app/public'));
+	app.use(express.favicon(path.join(__dirname, '/app/public/images/favicon.ico')));
 });
 app.configure('development', function(){
 	app.use(express.errorHandler());
