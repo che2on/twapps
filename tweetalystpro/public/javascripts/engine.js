@@ -9,7 +9,7 @@
 
 var proApp = angular.module('proApp', [] );
 var SCREEN_NAME= "";
-var free_templates=5;
+var free_replies=200;
 
 proApp.filter('orderObjectBy', function(){
  return function(input, attribute) {
@@ -381,7 +381,7 @@ proApp.controller('ReplyController', function($scope,$http,selectionService)
                      $('#messagebox > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
                       .append( "</button>");
                      $('#messagebox > .alert-danger').append("<strong>You have ");
-                     $('#messagebox > .alert-danger').append(free_templates-response.data.replycounter)
+                     $('#messagebox > .alert-danger').append(free_replies-response.data.replycounter)
                      $('#messagebox > .alert-danger').append(" Power replies remaining!</strong>");
                      $('#messagebox > .alert-danger').append('</div>');
 

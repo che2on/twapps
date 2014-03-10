@@ -31,3 +31,45 @@ exports.autoLogin = function(user, pass, callback)
 		}
 	});
 }
+
+exports.findExpiry = function(newData, callback)
+{
+	accounts.findOne({user:newData.user}, function(e,o){
+		if(o)
+		{
+			//moment().isAfter();
+
+			var d1 = moment(o.expirydate, "MMMM Do YYYY, h:mm:ss a")
+			var d2 = moment();
+			if(d2.isAfter(d1))
+			{
+				console.log("Expired");
+				callback('expired');
+			}
+			else
+			{
+				console.log("Not expired");
+				callback("active")
+			}
+			
+		
+		}
+	});
+}
+
+
+exports.updateExpiry = function(newData, callback)
+{
+
+		accounts.findOne({user:newData.user}, function(e, o){
+		var expdate = moment().add('days', 30);
+		o.expirydate =  moment(expdate).format("MMMM Do YYYY, h:mm:ss a");
+		accounts.save(o, {safe: true}, function(err) {
+					if (err) callback(err);
+					else callback(null, o);
+				});
+			
+	});
+
+
+}

@@ -16,26 +16,26 @@ exports.configplans = function()
 	var gold_plan =  	{				
 							"plan":"Gold Package",
 							"templates":10,
-							"max_reply_count":100,
+							"max_reply_count":3000,
 						};
 
 
 	var silver_plan =	{
 							"plan":"Silver Package",
 							"templates":5,
-							"max_reply_count":50,
+							"max_reply_count":1500,
 
 						};
     var bronze_plan =		{
 							"plan":"Bronze Package",
 							"templates":2,
-							"max_reply_count":20,
+							"max_reply_count":500,
 						};
 
 	var free_plan = 	{
 							"plan":"Free Package",
 							"templates":1,
-							"max_reply_count":5,
+							"max_reply_count":200,
 
 						};
 

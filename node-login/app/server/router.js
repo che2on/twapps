@@ -56,6 +56,10 @@ module.exports = function(app) {
 			// 	countries : CT,
 			// 	udata : req.session.user
 			// });
+				AM.findExpiry(req.session.user, function(o)
+				{
+						console.log("Result expiry is "+o)
+				});
 				res.redirect("http://tweetaly.st/pro")
 	    }
 	});

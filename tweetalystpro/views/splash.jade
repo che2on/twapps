@@ -4,10 +4,12 @@ html
         title= title
         link(rel='stylesheet', href='/lib/stylesheets/bootstrap.css')
         link(rel='stylesheet', href='/stylesheets/style.css')
+        link(href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet')
         script(src='/javascripts/custom.js')
         script(src='/javascripts/angular.min.js')
         script(src='lib/javascripts/jquery-1.10.2.js')
         script(src='lib/javascripts/bootstrap.min.js')
+        script(src='lib/javascripts/ga.js')
     body
         block content
         nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
@@ -15,50 +17,65 @@ html
              a.navbar-brand(href='#') Tweetalyst
             div
              ul.nav.navbar-nav.pull-right
-                li.active
-                 a(href='http://accounts.tweetaly.st/plans?aff_id='+aff_id+'&ref_id='+ref_id) Register
-                li
-                 a(href='http://accounts.tweetaly.st') Sign in
-                li
-                 a(href='mailto:support@tweetaly.st') Contact support@tweetaly.st
-
-        .container(style="padding-top:80px;")
-              #carousel-example-generic.carousel.slide(data-ride='carousel')
                 //
-                   Indicators 
-                ol.carousel-indicators
-                  li.active(data-target='#carousel-example-generic', data-slide-to='0')
-                  li(data-target='#carousel-example-generic', data-slide-to='1')
-                  li(data-target='#carousel-example-generic', data-slide-to='2')
-                  li(data-target='#carousel-example-generic', data-slide-to='3')
-                  li(data-target='#carousel-example-generic', data-slide-to='4')
-                //
-                   Wrapper for slides 
-                .carousel-inner
-                  .item.active
-                    img(src='images/img1.png', alt='Tweetalyst 1')
-                    .carousel-caption
-                  .item
-                    img(src='images/img2.png', alt='Tweetalyst 2')
-                    .carousel-caption
-                  .item
-                    img(src='images/img3.png', alt='Tweetalyst 3')
-                    .carousel-caption
-                  .item
-                    img(src='images/img4.png', alt='Tweetalyst 4')
-                    .carousel-caption
-                  .item
-                    img(src='images/img5.png', alt='Tweetalyst 5')
-                    .carousel-caption
+                  li.active
+                   a(href='http://accounts.tweetaly.st/plans?aff_id='+aff_id+'&ref_id='+ref_id) Register
+                  li
+                   a(href='http://accounts.tweetaly.st') Sign in
+                li
+                 a(href='#' onclick="showContactModal()") Contact
+        if test_case == "a"
+          .container(style="padding-top:80px;")
+                #carousel-example-generic.carousel.slide(data-ride='carousel')
+                  //
+                     Indicators 
+                  ol.carousel-indicators
+                    li.active(data-target='#carousel-example-generic', data-slide-to='0')
+                    li(data-target='#carousel-example-generic', data-slide-to='1')
+                    li(data-target='#carousel-example-generic', data-slide-to='2')
+                    li(data-target='#carousel-example-generic', data-slide-to='3')
+                    li(data-target='#carousel-example-generic', data-slide-to='4')
+                  //
+                     Wrapper for slides 
+                  .carousel-inner
+                    .item.active
+                      img(src='images/img1.png', alt='Tweetalyst 1')
+                      .carousel-caption
+                    .item
+                      img(src='images/img2.png', alt='Tweetalyst 2')
+                      .carousel-caption
+                    .item
+                      img(src='images/img3.png', alt='Tweetalyst 3')
+                      .carousel-caption
+                    .item
+                      img(src='images/img4.png', alt='Tweetalyst 4')
+                      .carousel-caption
+                    .item
+                      img(src='images/img5.png', alt='Tweetalyst 5')
+                      .carousel-caption
 
-                a.left.carousel-control(href='#carousel-example-generic', data-slide='prev')
-                  span.glyphicon.glyphicon-chevron-left
-                a.right.carousel-control(href='#carousel-example-generic', data-slide='next')
-                  span.glyphicon.glyphicon-chevron-right
+                  a.left.carousel-control(href='#carousel-example-generic', data-slide='prev')
+                    span.glyphicon.glyphicon-chevron-left
+                  a.right.carousel-control(href='#carousel-example-generic', data-slide='next')
+                    span.glyphicon.glyphicon-chevron-right
+        if test_case == "b"
+          .container(style="padding-top:80px;")
+              .download-section
+                .container
+                    .col-lg-8.col-lg-offset-2
+                      h3(style="font-family: 'Open Sans', sans-serif; font-weight: 300; ") tweetalyst
+                      h5(style="font-family: 'Open Sans', sans-serif;")
+                        | Respond to high value tweets faster.
+                      .video-container
+                        iframe(width='560', height='315', src='//www.youtube.com/embed/XVPFQb-bnvc?rel=0&showinfo=0', frameborder='0', allowfullscreen='')
+
 
         .content(style="text-align:center; padding:5px;")
             br
-            a(type="submit" class="btn btn-success btn-lg" onclick="terms("+aff_id+","+ref_id+")" ) Start your 30 day free trial by Sign in with twitter account
+            a(type="submit" class="btn btn-success btn-lg" onclick="terms("+aff_id+","+ref_id+")" ) Start your 30 day free trial by signing in with Twitter account
+            br
+            br
+            br
             div
                input(id="termsbox" type='checkbox' checked='checked' style="text-align:center" class="large") 
                &nbsp; I Agree to 
@@ -80,10 +97,11 @@ html
                                     h4#myModalLabel.modal-title Terms and Conditions
                                     button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
                                   .modal-body
-                                    | You have to read and agree to terms of service and privacy policy present at 
+                                    | You must agree to the Terms of Service and Privacy Policy present at 
                                     a(href="http://tweetaly.st/tos") tweetaly.st/tos
                                     |  and  
                                     a(href="http://tweetaly.st/privacy") tweetaly.st/privacy
+                                    |  in order to use tweetaly.st service.
                                   .modal-footer
                                     button.btn.btn-default(type='button', data-dismiss='modal') Close
         #myModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true' , style="color:black", ng-controller='ModalController')
@@ -93,10 +111,10 @@ html
                                     h4#myModalLabel.modal-title Terms and Conditions
                                     button.close(type='button', data-dismiss='modal',  aria-hidden='true') ×
                                   .modal-body
-                                    | Read the full terms of service here: 
+                                    | Read the full Terms of Service here: 
                                     a(href="http://tweetaly.st/tos")  tweetaly.st/tos
                                     br
-                                    | Read the full privacy policy here.  
+                                    | Read the full Privacy Policy here.  
                                     a(href="http://tweetaly.st/privacy")  tweetaly.st/privacy
                                     br
                                   .modal-footer
@@ -108,7 +126,7 @@ html
                                     h4#myModalLabel.modal-title Contact us
                                     button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
                                   .modal-body
-                                    | For any queries or feedback drop us an email to support@tweetaly.st 
+                                    | For any queries or feedback drop us an email to support@lexosystems.com
                                     br
                                   .modal-footer
                                     button.btn.btn-default(type='button', data-dismiss='modal') Close

@@ -69,6 +69,8 @@ exports.addNewAccount = function(newData, callback)
 						newData.pass = hash;
 					// append date stamp when record was created //
 						newData.date = moment().format('MMMM Do YYYY, h:mm:ss a');
+						var expdate = moment().add('days', 30);
+						newData.expirydate =  moment(expdate).format("MMMM Do YYYY, h:mm:ss a");
 						accounts.insert(newData, {safe: true}, callback);
 					});
 				}
@@ -76,6 +78,9 @@ exports.addNewAccount = function(newData, callback)
 		}
 	});
 }
+
+
+
 
 
 exports.addNewAffiliateAccount = function(newData, callback)

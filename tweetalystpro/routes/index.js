@@ -281,7 +281,26 @@ exports.dashboard = function ( req, res)
                         // }
                         if(req.session.user.country == "Free Package")
                         {
-                                res.render('dashboard' , {dashdata: {planStatus:"free", planName:req.session.user.country, userName: req.session.user.name, repliesremaining:remaining_replies}});
+
+                                AM.findExpiry(req.session.user, function(o)
+                                {
+
+                                   console.log(" expiry status is "+o);
+
+                                    if(o=="expired")
+                                    {
+
+                                      res.render('pro' , {dashdata: {planStatus:"expired", planName:req.session.user.country, userName: req.session.user.name}});
+
+                                    }
+                                    else
+                                    {
+                                      
+                                      res.render('dashboard' , {dashdata: {planStatus:"free", planName:req.session.user.country, userName: req.session.user.name, repliesremaining:remaining_replies}});
+
+                                    }
+
+                                });
 
                         }
                         else
@@ -561,7 +580,7 @@ exports.splash = function (req , res)
 
    // console.log("session is "+req.session.user);
     {
-        res.render('splash' , {pageData: {screen_name : ['Tweetalyst']}, ref_id:rid, aff_id:aid});
+        res.render('splash' , {pageData: {screen_name : ['Tweetalyst']}, ref_id:rid, aff_id:aid, test_case:"b"});
     }
 };
 
