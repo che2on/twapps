@@ -4,6 +4,7 @@
 var AM = require('./modules/sharedLogin');
 var TM = require('./modules/TweetsManager');
 var PM = require('./modules/PlanManager');
+var SM = require('./modules/ScoreManager');
 var CONSUMER_KEY = "sEORAkR5366d5o9wTfMtmQ";
 var CONSUMER_SECRET = "xwlDEXXpim7yEK69KtRo0C4zh5TR3sQCjBOaCEfwpcQ";
 var SCREEN_NAME = "";
@@ -12,6 +13,7 @@ var monk  = require('monk');
 var db = monk('localhost:27017/protes');
 var collection; // = db.get('collection');
 var _ = require('underscore')._;
+var moment    = require('moment');
 
 
 var twitter = require('ntwitter');
@@ -594,6 +596,105 @@ exports.logout = function(req, res) {
     req.session.destroy();
     res.redirect('/');
 };
+
+
+exports.score = function(req, res) {
+
+
+    var unique = req.session.oauth.access_token;
+    unique = unique.substring(unique.length-8, unique.length);
+
+
+
+    SM.setCollectionNames(unique,function(o){});
+    stoploop = 0;
+    scorePullLoop(req, res);
+   
+
+}
+
+var max_id = 0;
+var stoploop = 0;
+
+function scorePullLoop(req, res)
+{
+
+    if(req.session.oauth)
+    {
+            var twit = new twitter({
+            consumer_key: CONSUMER_KEY,
+            consumer_secret: CONSUMER_SECRET,
+            access_token_key: req.session.oauth.access_token,
+            access_token_secret: req.session.oauth.access_token_secret
+    });
+    }
+
+
+
+
+    var params;
+    if(max_id == 0)
+    params = { "count":"200" };
+    else
+    params = {"max_id":max_id, "count":"200"};
+
+    twit.getUserTimeline(params,function (err, data)
+    {
+
+
+            var o_counter = 0;
+            var last_obj;
+
+            _.each(data, function(o)
+            {
+
+              var javascriptdate = parseTwitterDate(o.created_at);
+              var d1 = moment(javascriptdate);
+              var d2 = moment().subtract('days', 30);
+              if(d1.isAfter(d2))
+              {
+                  o_counter++;
+                  console.log("more tweets to come");                        
+              }
+              else
+              {
+                  stoploop =1;
+                  console.log("all tweets fetched for 30 days.. breaking");
+
+              }       
+                  
+            });
+
+
+            var valid_tweets = _.first(data, o_counter);
+            console.log("o_counter is "+o_counter);
+            SM.storeTweets(valid_tweets, function(o)
+            {
+
+                          if(stoploop == 0 )
+                          {
+
+                              last_obj = _.last(data, 1);
+                              max_id = last_obj.id_str;
+                              scorePullLoop(req, res); 
+
+                          }
+                          else
+                          {
+                             res.render('score' , {dashdata: {planStatus:"active", planName:req.session.user.country, userName: req.session.user.name}, 
+                             score: { "followers":"processing" , "following":"processing", "retweets":"processing", "favorites":"processing", "ifactor":"processing", "cfactor":"processing"}});
+                             SM.findScore(function(o) { console.log("o is "+o)});
+
+                          }
+
+            })
+
+
+    });
+
+}
+
+
 
 
 function processRealtime(data)

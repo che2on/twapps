@@ -34,7 +34,7 @@ exports.configplans = function()
 
 	var free_plan = 	{
 							"plan":"Free Package",
-							"templates":1,
+							"templates":3,
 							"max_reply_count":200,
 
 						};

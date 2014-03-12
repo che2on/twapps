@@ -54,6 +54,7 @@ app.post('/posttweet',routes.posttweet);
 app.get('/pro', routes.pro);
 app.get('/tos', routes.tos);
 app.get('/privacy', routes.privacy);
+app.get('/score', routes.score);
 
 //app.get('/users', user.list);
 
