@@ -1,0 +1,13 @@
+doctype html
+html(lang='en')
+  head
+  meta(charset='utf-8')
+    title Speedometer HTML5 Canvas
+    script(src='speedometer.js')
+  body(onload='draw(0);')
+    canvas#tutorial(width='440', height='220')
+      | Canvas not available.
+    div
+      form#drawTemp
+        input#txtSpeed(type='text', name='txtSpeed', value='20', maxlength='2')
+        input(type='button', value='Draw', onclick='drawWithInputValue();')

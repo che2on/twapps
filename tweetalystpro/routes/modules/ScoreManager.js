@@ -28,6 +28,8 @@ var db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}),
   }
 });
 var score = db.collection('accounts');
+var leaderboard = db.collection('leaderboard');
+var influential = db.collection('influential');
 
 
 exports.setCollectionNames = function(unique, callback)
@@ -63,6 +65,43 @@ exports.storeTweets = function(data, callback)
                         }
                       });
 
+}
+
+
+
+exports.getGlobalLeaderBoard = function(callback)
+{
+  leaderboard.find().toArray(
+    function(e, res) {
+    if (e) callback(e)
+    else callback(null, res)
+  });
+};
+
+
+exports.getAllInfluentialScore = function(callback)
+{
+    influential.find().toArray(
+    function(e, res) {
+    if (e) callback(e)
+    else callback(null, res)
+  });
+
+}
+
+exports.addNewScoreRecord = function(newData, callback)
+{
+  leaderboard.findOne({user:newData.user}, function(e, o) {
+    if (o){
+      callback('already-entered');
+    } else
+    {
+      // append date stamp when record was created //
+      //newData.date = moment().format('MMMM Do YYYY, h:mm:ss a');
+      leaderboard.insert(newData, {safe: true}, callback);
+      
+    }
+  });
 }
 
 

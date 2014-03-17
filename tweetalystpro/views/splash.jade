@@ -14,10 +14,13 @@ html
     body
         block content
         nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
-            .navbar-header
-             a.navbar-brand(href='#') Tweetalyst
-            div
-             ul.nav.navbar-nav.pull-right
+            //
+              .navbar-header
+              a.navbar-brand(href='#') Tweetalyst
+            ul.nav.navbar-nav.pull-left
+                li
+                 a(href='#') Tweetalyst
+            ul.nav.navbar-nav.pull-right
                 //
                   li.active
                    a(href='http://accounts.tweetaly.st/plans?aff_id='+aff_id+'&ref_id='+ref_id) Register
@@ -25,6 +28,11 @@ html
                    a(href='http://accounts.tweetaly.st') Sign in
                 li
                  a(href='#' onclick="showContactModal()") Contact
+            ul.nav.navbar-nav.navcontent.pull-right(style="text-align:center;")
+              li(style="text-align:center;")
+                a(type="submit" class="btn btn-success btn-lg" href="/auth/twitter?check=score&aff_id="+aff_id+"&ref_id="+ref_id )  Check your Tweetalyst Score by signing in with Twitter.
+
+         
         if test_case == "a"
           .container(style="padding-top:80px;")
                 #carousel-example-generic.carousel.slide(data-ride='carousel')
@@ -67,8 +75,9 @@ html
                       h3(style="font-family: 'Open Sans', sans-serif; font-weight: 300; ") tweetalyst
                       h5(style="font-family: 'Open Sans', sans-serif;")
                         | Respond to high value tweets faster.
-                      .video-container
+                      .video-container   
                         iframe(wmode="opaque", width='560', height='315', src='//www.youtube.com/embed/XVPFQb-bnvc?wmode=opaque&rel=0&showinfo=0', frameborder='0', allowfullscreen='')
+
 
 
         .content(style="text-align:center; padding:5px;")

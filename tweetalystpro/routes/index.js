@@ -598,6 +598,16 @@ exports.logout = function(req, res) {
 };
 
 
+exports.score_thinking = function(req, res)
+{
+
+  res.render('thinking' , {}); 
+//  res.redirect('/scoreboard');
+
+
+};
+
+
 exports.score = function(req, res) {
 
 
@@ -608,6 +618,23 @@ exports.score = function(req, res) {
 
     SM.setCollectionNames(unique,function(o){});
     stoploop = 0;
+
+    //reset
+     max_id = 0;
+     stoploop = 0;
+     ORIGINAL_TWEETS_COUNT = 0;
+     ALL_TWEETS_COUNT = 0;
+     RETWEETED_COUNT = 0;
+     FAVORITE_COUNT = 0;
+     FOLLOWERS_COUNT = 0;
+     FOLLOWING_COUNT = 0;
+     ACTIVITY_FACTOR = 0;
+     CELEBRITY_FACTOR = 0;
+     IMPACT_FACTOR = 0;
+     CELEBRITY_BUCKET = "";
+     ACTIVITY_BUCKET = "";
+     IMPACT_BUCKET = "";
+
     scorePullLoop(req, res);
    
 
@@ -615,6 +642,18 @@ exports.score = function(req, res) {
 
 var max_id = 0;
 var stoploop = 0;
+var ORIGINAL_TWEETS_COUNT = 0;
+var ALL_TWEETS_COUNT = 0;
+var RETWEETED_COUNT = 0;
+var FAVORITE_COUNT = 0;
+var FOLLOWERS_COUNT = 0;
+var FOLLOWING_COUNT = 0;
+var ACTIVITY_FACTOR = 0;
+var CELEBRITY_FACTOR = 0;
+var IMPACT_FACTOR = 0;
+var CELEBRITY_BUCKET = "";
+var ACTIVITY_BUCKET = "";
+var IMPACT_BUCKET = "";
 
 function scorePullLoop(req, res)
 {
@@ -634,12 +673,13 @@ function scorePullLoop(req, res)
 
     var params;
     if(max_id == 0)
-    params = { "count":"200" };
+    params = {  "count":"200" };
     else
-    params = {"max_id":max_id, "count":"200"};
+    params = { "max_id":max_id, "count":"200"};
 
     twit.getUserTimeline(params,function (err, data)
     {
+            console.log("eror is "+err);
 
 
             var o_counter = 0;
@@ -667,32 +707,183 @@ function scorePullLoop(req, res)
 
 
             var valid_tweets = _.first(data, o_counter);
-            console.log("o_counter is "+o_counter);
-            SM.storeTweets(valid_tweets, function(o)
+
+            _.each(valid_tweets, function(o)
             {
 
-                          if(stoploop == 0 )
-                          {
+              if(max_id == o.id_str)
+              {
+                  console.log("Ignoring matching max_id "+max_id);
 
-                              last_obj = _.last(data, 1);
+              }
+              else
+              {
+                  if(o.hasOwnProperty("retweeted_status"))
+                  {
+                    console.log("Retweed tweet found with "+o.retweet_count+" number of retweets ");
+                  }
+                  else
+                  {
+                    ORIGINAL_TWEETS_COUNT++;
+                    RETWEETED_COUNT = RETWEETED_COUNT+ o.retweet_count;
+                    FAVORITE_COUNT = FAVORITE_COUNT+o.favorite_count;
+                  }
+
+                  ALL_TWEETS_COUNT++;
+                  FOLLOWERS_COUNT = o.user.followers_count;
+                  FOLLOWING_COUNT = o.user.friends_count;
+
+             }
+            });
+
+            console.log("o_counter is "+o_counter);
+          
+            if(stoploop == 0 )
+            {
+
+                              last_obj = _.last(data);
                               max_id = last_obj.id_str;
+                              console.log("max_id is "+max_id);
+
                               scorePullLoop(req, res); 
 
-                          }
-                          else
-                          {
-                             res.render('score' , {dashdata: {planStatus:"active", planName:req.session.user.country, userName: req.session.user.name}, 
-                             score: { "followers":"processing" , "following":"processing", "retweets":"processing", "favorites":"processing", "ifactor":"processing", "cfactor":"processing"}});
-                             SM.findScore(function(o) { console.log("o is "+o)});
+            }
+            else
+            {
 
-                          }
 
-            })
+                           
+
+                             calculateScores(function(err, o)
+                             {
+                             var scoredata = { user:req.session.user.name, followers:FOLLOWERS_COUNT, following:FOLLOWING_COUNT, cfactor:CELEBRITY_FACTOR, afactor:ACTIVITY_FACTOR, ifactor:IMPACT_FACTOR, cbucket:CELEBRITY_BUCKET, abucket:ACTIVITY_BUCKET, ibucket:IMPACT_BUCKET };
+                             SM.addNewScoreRecord(scoredata, function(e)
+                             {
+                              if(e)
+                              {
+
+                              }
+                              else
+                              {
+
+
+                              }
+
+                               SM.getGlobalLeaderBoard( function(e, allscores)
+                               {
+                                  //res.render('print', { title : 'Account List', accts : accounts });
+                                  res.render('score' , { leaderboard : allscores, dashdata: {planStatus:"active", planName:req.session.user.country, userName: req.session.user.name}, 
+                                  score: {"followers":FOLLOWERS_COUNT , "following":FOLLOWING_COUNT, "alltweets":ALL_TWEETS_COUNT , "originaltweets":ORIGINAL_TWEETS_COUNT, "retweets":RETWEETED_COUNT, "favorites":FAVORITE_COUNT, "afactor":ACTIVITY_FACTOR, "ifactor":IMPACT_FACTOR, "cfactor":CELEBRITY_FACTOR, cbucket:CELEBRITY_BUCKET, abucket:ACTIVITY_BUCKET, ibucket:IMPACT_BUCKET}});
+
+
+                                });
+
+
+
+
+                             });
+
+                            });
+                            
+                            // SM.findScore(function(o) { console.log("o is "+o)});
+
+            }
 
 
     });
 
 }
+
+
+
+function calculateScores(callback)
+{
+    calculateAcitivityFactor();
+    calculateCelebrityFactor();
+
+
+
+    //Impact Factor!
+    //Boundary condition
+   if(FAVORITE_COUNT == 0) FAVORITE_COUNT =1;
+   if(RETWEETED_COUNT == 0) RETWEETED_COUNT =1;
+
+   var max_arr_var1;
+   SM.getAllInfluentialScore( function(e, influencialscores)
+   {
+      var max_arr = _.max(influencialscores, function(o){return o.influence_var1;});
+      console.log("max is "+max_arr.influence_var1);
+      max_arr_var1 = max_arr.influence_var1;
+      var var_1 = 0.2* log10(FAVORITE_COUNT) + 0.8*log10(RETWEETED_COUNT);
+      IMPACT_FACTOR =  Math.round((10+var_1 - max_arr_var1) * 10);
+
+   if(IMPACT_FACTOR >= 90 )  IMPACT_BUCKET = "Opinion Maker";
+   if(IMPACT_FACTOR >= 80 && IMPACT_FACTOR < 90 )  IMPACT_BUCKET =  "Influential";
+   if(IMPACT_FACTOR >= 70 && IMPACT_FACTOR < 80 )  IMPACT_BUCKET =  "Persuasive";
+   if(IMPACT_FACTOR >= 60 && IMPACT_FACTOR < 70 )  IMPACT_BUCKET =  "Credible";
+   if(IMPACT_FACTOR <= 50 && IMPACT_FACTOR < 60 )  IMPACT_BUCKET =  "Acceptable";
+   if(IMPACT_FACTOR < 50 )  IMPACT_BUCKET =  "Honourable Mention";
+   callback(null, "done");
+
+   })
+}
+
+
+function calculateAcitivityFactor()
+{
+   ACTIVITY_FACTOR = Math.round(ALL_TWEETS_COUNT / 30 ) ; // 30 is no of days
+
+   if(ACTIVITY_FACTOR >= 30 )  ACTIVITY_BUCKET = "Tireless Tweeter Bee";
+   if(ACTIVITY_FACTOR >= 20 && ACTIVITY_FACTOR < 30 ) ACTIVITY_BUCKET =  "Spirited Tweeter";
+   if(ACTIVITY_FACTOR >= 10 && ACTIVITY_FACTOR < 20 ) ACTIVITY_BUCKET =  "Active Tweeter";
+   if(ACTIVITY_FACTOR >= 2 && ACTIVITY_FACTOR < 10 )  ACTIVITY_BUCKET =  "Breezy Tweeter";
+   if(ACTIVITY_FACTOR <  2 )  ACTIVITY_BUCKET =  "Dormant Tweeter";
+
+}
+
+
+function log10(val) {
+  return Math.log(val) / Math.LN10;
+}
+
+
+function calculateCelebrityFactor()
+{
+
+  //Boundary Condition
+  if(FOLLOWERS_COUNT == 0) FOLLOWERS_COUNT =1;
+ 
+  var celeb_threshold = 50000000;
+  var var_1 = log10(celeb_threshold) - log10(FOLLOWERS_COUNT);
+   console.log("followers count is "+FOLLOWERS_COUNT);
+
+ console.log("var_1 is "+var_1);
+  CELEBRITY_FACTOR = Math.round((10-var_1) * 10);
+  if(CELEBRITY_FACTOR > 100)
+  CELEBRITY_FACTOR =100;
+
+
+   if(CELEBRITY_FACTOR >= 90 )  CELEBRITY_BUCKET = "Celebrity";
+   if(CELEBRITY_FACTOR >= 80 && CELEBRITY_FACTOR < 90 )  CELEBRITY_BUCKET =  "Famous";
+   if(CELEBRITY_FACTOR >= 70 && CELEBRITY_FACTOR < 80 )  CELEBRITY_BUCKET =  "Important";
+   if(CELEBRITY_FACTOR >= 60 && CELEBRITY_FACTOR < 70 )  CELEBRITY_BUCKET =  "Reputable";
+   if(CELEBRITY_FACTOR <   60 )  CELEBRITY_BUCKET =  "Honourable Mention";
+   
+
+}
+
+function calculateImpactFactor()
+{
+
+  
+
+
+
+
+
+}
+
+
 
 
 

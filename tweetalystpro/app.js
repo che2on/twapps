@@ -55,6 +55,7 @@ app.get('/pro', routes.pro);
 app.get('/tos', routes.tos);
 app.get('/privacy', routes.privacy);
 app.get('/score', routes.score);
+//app.get('/scoreboard', routes.scoreboard);
 
 //app.get('/users', user.list);
 
@@ -92,6 +93,13 @@ app.get('/auth/twitter', function(req, res)
         {
             rid = req.query.ref_id;
             req.session.referral = { id: req.query.ref_id};
+            req.session.save();
+        }
+
+        if(req.query.check!=null)
+        {
+           // rid = req.query.check;
+            req.session.scoresession = { };
             req.session.save();
         }
 
@@ -202,6 +210,7 @@ function guestSignup(req, res, screen_name)
                             }, function(e){
                                 if (e)
                                 {
+
                                     guestLogin(req, res, screen_name);
                                    // res.send(e, 400);
                                 }    
@@ -243,6 +252,9 @@ function guestLogin(req, res, screen_name)
                 // share these cookie values
                     res.cookie('u', o.user, {domain:'.tweetaly.st' , maxAge: 900000});
                     res.cookie('p', o.pass, {domain:'.tweetaly.st' , maxAge: 900000});
+                    if(req.session.scoresession)
+                    res.redirect('/score')
+                    else
                     res.redirect('/openstreams');
                  //res.send(o, 200);
             }
