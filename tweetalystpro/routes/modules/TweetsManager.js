@@ -12,7 +12,9 @@ var MONK = require('monk');
 var DB = MONK('localhost:27017/protes');
 var collection = DB.get('replies');
 var tweetscollection = DB.get('tweets');
-var unattendedcollection = DB.get('unattended')
+var unattendedcollection = DB.get('unattended');
+var prioritycollection = DB.get('priority');
+var newusertweetscollection = DB.get('newusers');
 
 
 /* establish the database connection */
@@ -30,7 +32,9 @@ exports.setCollectionNames = function(unique, callback)
 {
   collection =DB.get(unique+'replies');
   tweetscollection = DB.get(unique+'tweets');
-  unattendedcollection = DB.get(unique+'unattended');
+  unattendedcollection = DB.get(unique+'unattended_testing');
+  prioritycollection = DB.get(unique+'priority');
+  newusertweetscollection = DB.get(unique+'newusers');
   callback({status:"success"});
 }
 
@@ -125,7 +129,7 @@ exports.getNextUnattended = function(_time, callback)
       }
       else
       {
-          console.log(docs);
+         // console.log(docs);
           for(var a in docs)
           {
             console.log("wow");
@@ -136,6 +140,75 @@ exports.getNextUnattended = function(_time, callback)
     
   });
 }
+
+
+exports.getNextPriority = function(_time, callback)
+{
+  
+  var options = {
+    "limit": 10,
+    "sort": {"time":-1}
+  }
+
+  console.log("rec.. "+_time);
+  
+  prioritycollection.find( {time: {"$lt": _time}}, options, function(err,docs) 
+  {
+
+      if(err)
+      {
+            console.log("its over");
+            callback(null);
+      }
+      else
+      {
+         // console.log(docs);
+          for(var a in docs)
+          {
+            console.log("wow");
+            
+          }
+          callback(docs);
+      }
+    
+  });
+}
+
+
+exports.getNextNewUsers = function(_time, callback)
+{
+  
+  var options = {
+    "limit": 10,
+    "sort": {"time":-1}
+  }
+
+  console.log("rec.. "+_time);
+  
+  newusertweetscollection.find( {time: {"$lt": _time}}, options, function(err,docs) 
+  {
+
+      if(err)
+      {
+            console.log("its over");
+            callback(null);
+      }
+      else
+      {
+         // console.log(docs);
+          for(var a in docs)
+          {
+            console.log("wow");
+            
+          }
+          callback(docs);
+      }
+    
+  });
+}
+
+
+
 
 exports.isRepliesCollectionEmpty = function(callback)
 {
@@ -234,6 +307,53 @@ exports.markAsUnattended = function(data, callback)
     data.time = ""+data.time;
     unattendedcollection.ensureIndex( {"id_str":1}, {unique: true} );
     unattendedcollection.insert(data, function (err, doc) 
+                       {
+                         if (err) {
+
+                              callback(null);
+                                // If it failed, return error
+                                 //  res.send("There was a problem adding the information to the database.");
+                            }
+                        else {
+
+                            callback("success inserting");
+
+                        }
+                      });
+
+}
+
+exports.markAsPriority = function(data, callback)
+{
+
+    data.time = +new Date(data.created_at);
+    data.time = ""+data.time;
+    prioritycollection.ensureIndex( {"id_str":1}, {unique: true} );
+    prioritycollection.insert(data, function (err, doc) 
+                       {
+                         if (err) {
+
+                              callback(null);
+                                // If it failed, return error
+                                 //  res.send("There was a problem adding the information to the database.");
+                            }
+                        else {
+
+                            callback("success inserting");
+
+                        }
+                      });
+
+}
+
+
+exports.markAsNewUser = function(data, callback)
+{
+
+    data.time = +new Date(data.created_at);
+    data.time = ""+data.time;
+    newusertweetscollection.ensureIndex( {"id_str":1}, {unique: true} );
+    newusertweetscollection.insert(data, function (err, doc) 
                        {
                          if (err) {
 

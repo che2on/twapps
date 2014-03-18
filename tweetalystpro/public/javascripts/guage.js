@@ -24,6 +24,53 @@
  //  }); 
 
 
+ $(document).ready(function () {
+    
+    var hoverHTMLImpact = '<p><h4>Impact Score Levels </h4><ul>' + '<li> >90: Opinion Maker </li>' +
+                        '<li>90-80: Influential</li>' +
+                        '<li>80-70: Persuasive</li>' +
+                        '<li>70-60: Credible</li>' +
+                        '<li>60-50: Acceptable</li>' +
+                        '<li><50: Honorable Mention </li>' +
+                           '</ul></p>';
+    var hoverHTMLCelebrity = '<p><h4>Celebrity Score Levels </h4><ul>' + '<li> >90: Celebrity </li>' +
+                        '<li>90-80: Famous</li>' +
+                        '<li>80-70: Important</li>' +
+                        '<li>70-60: Reputable</li>' +
+                        '<li><60: Honourable Mention</li>' +
+                           '</ul></p>';
+    var hoverHTMLActivity = '<p><h4>Activity Score Levels </h4><ul>' + '<li> >30: Tireless Tweeter Bee </li>' +
+                        '<li>30-20: Spirited Tweeter</li>' +
+                        '<li>20-10: Active Tweeter</li>' +
+                        '<li>10-2: Breezy Tweeter</li>' +
+                        '<li><2: Dormant Tweeter</li>' +
+                           '</ul></p>';
+
+
+
+    $("#impact-openRight").hovercard({
+        detailsHTML: hoverHTMLImpact,
+        width: 350,
+        cardImgSrc: '../images/square.png',
+        openOnRight: true
+    });
+
+    $("#celebrity-openRight").hovercard({
+        detailsHTML: hoverHTMLCelebrity,
+        width: 350,
+        cardImgSrc: '../images/square.png',
+        openOnRight: true
+    });
+
+    $("#activity-openRight").hovercard({
+        detailsHTML: hoverHTMLActivity,
+        width: 350,
+        cardImgSrc: '../images/square.png',
+        openOnRight: true
+    });
+});
+
+
 
   function plotactivity(val, bucket)
   {

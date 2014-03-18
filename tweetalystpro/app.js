@@ -48,6 +48,8 @@ app.get('/openstreams', routes.openstreams);
 app.get('/downloadallreplies', routes.downloadallreplies);
 app.get('/downloadallusertweets', routes.downloadallusertweets);
 app.get('/getnextunattendedtweets', routes.getnextunattendedtweets);
+app.get('/getnextprioritytweets', routes.getnextprioritytweets);
+app.get('/getnextnewusertweets', routes.getnextnewusertweets);
 app.get('/setupunattendedtweets', routes.setupunattendedtweets);
 app.get('/getnewreplies', routes.getnewreplies);
 app.post('/posttweet',routes.posttweet);
@@ -153,7 +155,7 @@ app.get('/auth/twitter/callback', function(req, res, next){
                         .verifyCredentials(function (err, data) 
                         {
                             guestSignup(req, res, data.screen_name);
-                            console.log(err,data);
+                           // console.log(err,data);
                             console.log("In app.js ");
                     });                       
 

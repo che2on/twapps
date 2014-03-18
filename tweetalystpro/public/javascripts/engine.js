@@ -30,9 +30,44 @@ proApp.filter('orderObjectBy', function(){
 });
 
 
+proApp.filter('with', function() {
+  return function(items, field) {
+        var result = {};
+        angular.forEach(items, function(value, key) {
+            if (!value.hasOwnProperty(field)) {
+                result[key] = value;
+            }
+        });
+        return result;
+    };
+});
+
+
+proApp.filter('bytabs', function() {
+    return function(twitts) {
+      var out = [];
+
+        for(var t in twitts)
+        {
+          if(t.text.length < 10)
+            out.push(t);
+        }
+      //tweets.splice(0,1);
+     // out.push (  { text:"hey"});
+      // Filter logic here, adding matches to the out var.
+      return out;
+    }
+  });
+
+
 proApp.directive('whenScrolled', function() {
     return function(scope, elm, attr) {
         console.log("triggered");
+        console.log("elm is "+elm);
+        for(var i=0; i <elm.length; i++)
+        {
+          console.log("Elms are "+elm[i]);
+        }
         var raw = elm[0];
 
         elm.bind('scroll', function() {
@@ -42,6 +77,8 @@ proApp.directive('whenScrolled', function() {
         });
     };
 });
+
+
 
 // angular.module('proApp', []).directive('whenScrolled', function() {
 //     return function(scope, elm, attr) {
@@ -96,6 +133,12 @@ proApp.service('selectionService', function($rootScope) {
         return replied_tweet;
    }
 
+   this.setInboxloadCompleteFlag = function()
+   {
+      $rootScope.$broadcast('SetupComplete');
+      return "success";
+   }
+
 });
 
 proApp.controller('ClickToEditCtrl' , function ClickToEditCtrl($scope)
@@ -112,17 +155,194 @@ function parseTwitterDate(aDate)
 }
 
 var firsttime = 0;
+var priorityfirsttime =0;
+var newuserfirsttime =0;
+
+proApp.controller('PriorityTweetFeed',  function ($rootScope, $scope, $http, selectionService) 
+{
+
+       $scope.prioritytwitts =[];
+
+       $scope.$on('SetupComplete', function()
+       {
 
 
-proApp.controller('TweetFeed',  function ($scope, $http, selectionService) 
+          console.log("Refreshing the priority new data!");
+          var currenttime = new Date().getTime();
+          $http.get('/getnextprioritytweets?time='+currenttime).success(function(data) {
+ 
+          for(d in data)
+          {
+          console.log("priority is "+data[d].priority);
+          data[d].time = +new Date(data[d].created_at);
+          data[d].time = ""+data[d].time;
+          }
+          $scope.prioritytwitts = data;
+
+          
+         });
+          
+       });
+
+
+        $scope.setMaster = function(section)
+        {
+          selectionService.addTweet(section);
+        }
+
+        $scope.delete = function(tmp)
+        {
+            
+            console.log("attempting to delete.. "+tmp.text);
+            $scope.prioritytwitts.pop(tmp);
+            //return $scope.twitts;
+          //  $scope.$apply();
+        }
+
+        $scope.loadImages = function()
+        {
+            if(priorityfirsttime==0) {priorityfirsttime = 1; return; }
+
+           var lasttweet = $scope.prioritytwitts[$scope.prioritytwitts.length-1]
+           console.log("load images triggered");
+            $http.get('/getnextprioritytweets?time='+lasttweet.time).success(function(data) 
+            {
+
+             //  for(d in data) 
+             //  {
+             //    data[d].created_stamp = parseTwitterDate(data[d].created_at);
+             //    data[d].timestamp = +new Date(data[d].created_at);
+             // }
+            $scope.prioritytwitts = $scope.prioritytwitts.concat(data);
+      
+            });
+            // if (in_progress){
+            //     var url = '/api/v1/files.json';
+            //     if ($scope.next_page) {
+            //         url = $scope.next_page;
+            //     }
+            //     $http.get(url).success(function(data) {
+            //         $scope.images = $scope.images.concat(data.items);
+            //         $scope.next_page = data.nextPageInternal;
+
+            //         if (!$scope.next_page) {
+            //             in_progress = false;
+            //         }
+            //     });
+            // }
+        };
+
+
+         $scope.loadImages();
+
+
+
+
+
+
+});
+
+
+proApp.controller('NewUsersTweetFeed',  function ($rootScope, $scope, $http, selectionService) 
+{
+
+       $scope.newusertwitts =[];
+
+       $scope.$on('SetupComplete', function()
+       {
+
+
+          console.log("Refreshing the newuser new data!");
+          var currenttime = new Date().getTime();
+          $http.get('/getnextnewusertweets?time='+currenttime).success(function(data) {
+ 
+          for(d in data)
+          {
+          console.log("new user  is "+data[d].newuser);
+          data[d].time = +new Date(data[d].created_at);
+          data[d].time = ""+data[d].time;
+          }
+          $scope.newusertwitts = data;
+
+          
+         });
+          
+       });
+
+
+        $scope.setMaster = function(section)
+        {
+          selectionService.addTweet(section);
+        }
+
+        $scope.delete = function(tmp)
+        {
+            
+            console.log("attempting to delete.. "+tmp.text);
+            $scope.newusertwitts.pop(tmp);
+            //return $scope.twitts;
+          //  $scope.$apply();
+        }
+
+        $scope.loadImages = function()
+        {
+            if(newuserfirsttime==0) {newuserfirsttime = 1; return; }
+
+           var lasttweet = $scope.newusertwitts[$scope.newusertwitts.length-1]
+           console.log("load images triggered");
+            $http.get('/getnextnewusertweets?time='+lasttweet.time).success(function(data) 
+            {
+
+             //  for(d in data) 
+             //  {
+             //    data[d].created_stamp = parseTwitterDate(data[d].created_at);
+             //    data[d].timestamp = +new Date(data[d].created_at);
+             // }
+            $scope.newusertwitts = $scope.newusertwitts.concat(data);
+      
+            });
+            // if (in_progress){
+            //     var url = '/api/v1/files.json';
+            //     if ($scope.next_page) {
+            //         url = $scope.next_page;
+            //     }
+            //     $http.get(url).success(function(data) {
+            //         $scope.images = $scope.images.concat(data.items);
+            //         $scope.next_page = data.nextPageInternal;
+
+            //         if (!$scope.next_page) {
+            //             in_progress = false;
+            //         }
+            //     });
+            // }
+        };
+
+
+         $scope.loadImages();
+
+
+
+
+
+
+});
+
+
+
+proApp.controller('TweetFeed',  function ($rootScope, $scope, $http, selectionService) 
 {
   var currenttime = new Date().getTime();
   $http.get('/setupunattendedtweets').success(function(data) 
   {
+      // selectionService.setInboxloadCompleteFlag();
+        $rootScope.$broadcast('SetupComplete');
+
         $http.get('/getnextunattendedtweets?time='+currenttime).success(function(data) {
+
 
         for(d in data)
         {
+        console.log("priority is "+data[d].priority);
         data[d].time = +new Date(data[d].created_at);
         data[d].time = ""+data[d].time;
         }
@@ -130,6 +350,21 @@ proApp.controller('TweetFeed',  function ($scope, $http, selectionService)
         
        });
   });
+
+
+
+   $scope.filterByPriority = function(t)
+    {
+
+      console.log("t is "+t.text);
+      if(t.text < 100 )
+      {
+        return $scope.twitts.indexOf(t);
+      }
+
+      
+    };
+
 
 
     var socket = io.connect('http://tweetaly.st:3001');
@@ -145,6 +380,7 @@ proApp.controller('TweetFeed',  function ($scope, $http, selectionService)
         $('#chatAudio')[0].play();
 
     })
+
 
     $scope.setMaster = function(section)
     {
@@ -197,7 +433,7 @@ proApp.controller('TweetFeed',  function ($scope, $http, selectionService)
 
     //TweetFeed.$inject = ['$scope', '$http'];
 
-    $scope.loadImages();
+      $scope.loadImages();
 
 
 
@@ -397,17 +633,26 @@ proApp.controller('ReplyController', function($scope,$http,selectionService)
                      $('#success > .alert-danger').append('</div>');
                  //clear all fields
                  $('#contactForm').trigger("reset");
-
-
-
         }
     );
-
-
     }
 
+     $(document).ready(function() {
+    var text_max = 140;
+    $('#remaining').html(text_max + ' characters remaining');
+
+    $('#message').keyup(function() {
+        var text_length = $('#message').val().length;
+        var text_remaining = text_max - text_length;
+
+        $('#remaining').html(text_remaining + ' characters remaining');
+    });
+});
 
 });
+
+
+   
 
 
 proApp.controller('ModalController', function($rootScope, $scope, $http)

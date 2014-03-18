@@ -13,6 +13,24 @@ body {
 }
 
 
+#red {
+
+    height: 500px;
+    overflow: auto;
+}
+
+#orange {
+
+    height: 500px;
+    overflow: auto;
+}
+
+#yellow {
+
+    height: 500px;
+    overflow: auto;
+}
+
 #column1 {
             height: 500px;
             overflow: auto;
@@ -83,3 +101,36 @@ height: 500px;
 table tbody tr > td {
   background-color: #1ba1e2 !important;
 }
+
+.nav-tabs > li > a
+{
+     color: white;
+
+}
+
+.nav-tabs > li > a:hover
+{
+     color: black;
+     background-color: white;
+
+}
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus
+{
+            color: black;
+            background-color: white;  
+} 
+
+
+/*.tabbody{
+   position: relative;
+}
+
+.tab-pane{
+   position: absolute;
+   top: 42px;
+   bottom: 0;
+   right: 0;
+   left: 0;
+   overflow:auto;
+}*/

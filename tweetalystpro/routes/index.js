@@ -54,7 +54,7 @@ exports.verify = function(req, res)
             .verifyCredentials(function (err, data)
              {
 
-                console.log(err, data);
+               // console.log(err, data);
                 SCREEN_NAME = data.screen_name;
                 collection = db.get(SCREEN_NAME);
                 if (err) res.send(err, 500)
@@ -1042,6 +1042,13 @@ exports.setupunattendedtweets = function(req, res)
             access_token_secret: req.session.oauth.access_token_secret
         });
 
+              var twit3 = new twitter({
+            consumer_key: CONSUMER_KEY,
+            consumer_secret: CONSUMER_SECRET,
+            access_token_key: req.session.oauth.access_token,
+            access_token_secret: req.session.oauth.access_token_secret
+        });
+
         TM.setCollectionNames(unique,function(o){});
 
 
@@ -1072,40 +1079,126 @@ exports.setupunattendedtweets = function(req, res)
                     //res.send(o);
                 });
 
-                for(d in data)
-                { 
-                    if(data[d].id_str!=null)
-                    if(_.contains(rep_ids, data[d].id_str))
+
+
+                var userids_concatenated = "";
+                var c=0;
+
+                _.each(data, function(obj)
+                {
+                     if(c<90)
+                     userids_concatenated += obj.user.id_str+",";
+                     c++;
+                });
+
+
+                userids_concatenated = userids_concatenated.substring(0, userids_concatenated.length - 1);
+               // userids_concatenated += data[i].id_str+",";
+                console.log("concatenated string is "+userids_concatenated);
+                var par = userids_concatenated;
+                //var par = ["443096220785860608","442674107490910208","436067326840950784"];
+              //  var par = "443096220785860608,442674107490910208,436067326840950784";
+
+
+                 var prioritylist = [];
+                 var newuserslist = [];
+
+
+
+                twit3.lookupFriendship( par , function( err, reldata)
+                {
+
+                  console.log("Par is "+par);
+                  console.log("err is "+err);
+                  console.log("data is "+data);
+
+                  _.each(reldata, function(obj)
+                  {
+
+
+                    if(obj.connections.length > 0 )
                     {
-                        console.log("attended like  "+data[d].text);
-                        TM.markAsAttended(data[d].id_str, function(o)
-                        {
+                      for(var i=0; i<obj.connections.length; i++)
+                      {
+                        console.log(obj.connections[i]);
+                        console.log("____________");
 
-                        });
+                        if(obj.connections[i] == "followed_by")
+                        prioritylist.push(obj.id_str);
+
+                        if(obj.connections[i] == "none")
+                        newuserslist.push(obj.id_str);
+                        
+                      }
                     }
-                    else
-                    {
-                        TM.markAsUnattended(data[d], function(o)
+
+                     
+
+                  });
+
+
+
+                    for(d in data)
+                    { 
+
+                          if(_.contains(prioritylist, data[d].user.id_str))
+                          {
+                            data[d].priority =1;
+                            TM.markAsPriority(data[d], function(o)
+                            {
+
+                            });
+                          }
+
+                          if(_.contains(newuserslist, data[d].user.id_str))
+                          {
+                            data[d].newuser =1;
+                            TM.markAsNewUser(data[d], function(o)
+                            {
+
+                            });
+                          }
+
+
+                        if(data[d].id_str!=null)
+                        if(_.contains(rep_ids, data[d].id_str))
                         {
+                            console.log("attended like  "+data[d].text);
+                            console.log("priority is "+data[d].priority);
+                            TM.markAsAttended(data[d].id_str, function(o)
+                            {
 
-                        });
+                            });
+                        }
+                        else
+                        {
+                            TM.markAsUnattended(data[d], function(o)
+                            {
 
-                      //  console.log("not attended");
-                       // console.log(data[d].id_str+" is not found in "+rep_ids);
+                            });
+
+                          //  console.log("not attended");
+                           // console.log(data[d].id_str+" is not found in "+rep_ids);
+                        }
+                        //if(data[d].id_str)
                     }
-                    //if(data[d].id_str)
-                }
-
-
-                res.send({status:"success"});
 
 
 
 
 
 
-                
-       
+                    res.send({status:"success"});
+
+
+
+                });
+
+
+
+
+
+
                
 
         });
@@ -1127,6 +1220,31 @@ exports.getnextunattendedtweets = function(req, res)
                     res.send(o);
     });
 }
+
+
+exports.getnextprioritytweets = function(req, res)
+{
+
+    TM.getNextPriority(req.query.time, function(o)
+    {
+
+                   // console.log(o);
+                    res.send(o);
+    });
+}
+
+exports.getnextnewusertweets = function(req, res)
+{
+
+    TM.getNextNewUsers(req.query.time, function(o)
+    {
+
+                   // console.log(o);
+                    res.send(o);
+    });
+}
+
+
 
 
 
