@@ -216,3 +216,6 @@ pip-log.txt
 node-login/node_modules/
 tweetalyspro/node_modules/
 node_modules
+ghost
+blog/node_modules
+tv/node_modules

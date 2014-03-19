@@ -31,6 +31,34 @@ if ('development' == app.get('env')) {
     app.use(express.errorHandler());
 }
 
+var httpProxy = require('http-proxy');
+
+var apiProxy = httpProxy.createProxyServer();
+
+
+exports.app = app;
+
+app.get("/blog*", function(req, res, next){ 
+  console.log("proxy starts")  ;
+  apiProxy.web(req, res, { target: 'http://tweetaly.st/blog:2368' });
+  console.log("proxy ends")  ;
+});
+
+app.post("/blog*", function(req, res, next){ 
+  apiProxy.web(req, res, { target: 'http://tweetaly.st/blog:2368' });
+});
+
+app.delete("/blog*", function(req, res, next){ 
+  apiProxy.web(req, res, { target: 'http://tweetaly.st/blog:2368' });
+});
+
+app.put('/blog*', function(req, res, next) {
+        apiProxy.web(req, res, { target: 'http://tweetaly.st/blog:2368'});
+    });
+
+app.use(express.urlencoded());
+app.use(express.json());
+
 app.get('/future', routes.index);
 app.get('/', routes.splash);
 app.get('/mentionmanagement', routes.mentionmanagement);
@@ -57,15 +85,11 @@ app.get('/pro', routes.pro);
 app.get('/tos', routes.tos);
 app.get('/privacy', routes.privacy);
 app.get('/score', routes.score);
-//app.get('/scoreboard', routes.scoreboard);
 
-//app.get('/users', user.list);
 
-// http.createServer(app).listen(app.get('port'), function () {
-//     console.log('Express server listening on port ' + app.get('port'));
-// });
 
-exports.app = app;
+
+
 
 var util = require('util');
 var OAuth= require('oauth').OAuth;
