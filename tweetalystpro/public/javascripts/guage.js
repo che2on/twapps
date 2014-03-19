@@ -83,7 +83,8 @@
     title: bucket,
     titleFontColor :"#FFFFFF",
     label: "Activity",
-    labelFontColor:"#FFFFFF"
+    labelFontColor:"#FFFFFF",
+    levelColors:["#ff0000","#e9ae11", "#46a718"]
   }); 
 
   } 
@@ -101,7 +102,8 @@
     title: bucket,
     titleFontColor :"#FFFFFF",
     label: "Impact",
-    labelFontColor:"#FFFFFF"
+    labelFontColor:"#FFFFFF",
+    levelColors:["#ff0000","#e9ae11", "#46a718"]
   }); 
 
   } 
@@ -119,7 +121,8 @@
     title: bucket,
     titleFontColor :"#FFFFFF",
     label: "Activity",
-    labelFontColor:"#FFFFFF"
+    labelFontColor:"#FFFFFF",
+    levelColors:["#ff0000","#e9ae11", "#46a718"]
 
   }); 
 
@@ -138,7 +141,8 @@
     title: bucket,
     titleFontColor :"#FFFFFF",
     label: "Celebrity",
-    labelFontColor:"#FFFFFF"
+    labelFontColor:"#FFFFFF",
+    levelColors:["#ff0000","#e9ae11", "#46a718"]
   }); 
 
   } 
@@ -157,7 +161,8 @@
     title: bucket,
     titleFontColor :"#FFFFFF",
     label: "Celebrity",
-    labelFontColor:"#FFFFFF"
+    labelFontColor:"#FFFFFF",
+    levelColors:["#ff0000","#e9ae11", "#46a718"]
   }); 
 
   } 
@@ -175,7 +180,8 @@
     title: bucket,
     titleFontColor :"#FFFFFF",
     label:"Impact",
-    labelFontColor:"#FFFFFF"
+    labelFontColor:"#FFFFFF",
+    levelColors:["#ff0000","#e9ae11", "#46a718"]
   }); 
 
   } 
