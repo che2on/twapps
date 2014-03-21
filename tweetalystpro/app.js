@@ -79,6 +79,7 @@ app.get('/getnextunattendedtweets', routes.getnextunattendedtweets);
 app.get('/getnextprioritytweets', routes.getnextprioritytweets);
 app.get('/getnextnewusertweets', routes.getnextnewusertweets);
 app.get('/setupunattendedtweets', routes.setupunattendedtweets);
+app.get('/dismisstweet', routes.dismisstweet);
 app.get('/getnewreplies', routes.getnewreplies);
 app.post('/posttweet',routes.posttweet);
 app.get('/pro', routes.pro);
@@ -88,9 +89,7 @@ app.get('/score', routes.score);
 
 
 
-
-
-
+ 
 var util = require('util');
 var OAuth= require('oauth').OAuth;
 

@@ -185,10 +185,31 @@ proApp.controller('PriorityTweetFeed',  function ($rootScope, $scope, $http, sel
        });
 
 
+        $scope.dismissTweet = function(tweet)
+        {
+               console.log("Trying to dismiss tweet "+tweet.text);
+               $http.get('/dismisstweet?id='+tweet.id_str+"&sec=priority").success(function(data)
+                { 
+                  console.log("dismissed "+data) 
+
+                      for(t in $scope.prioritytwitts)
+                     {
+                        if($scope.prioritytwitts[t].id_str == tweet.id_str)
+                        {
+                             $scope.prioritytwitts.splice($scope.prioritytwitts.indexOf($scope.prioritytwitts[t]),1);
+                        }
+                    }
+
+                } );
+        }
+
+
         $scope.setMaster = function(section)
         {
           selectionService.addTweet(section);
         }
+
+
 
         $scope.delete = function(tmp)
         {
@@ -198,6 +219,11 @@ proApp.controller('PriorityTweetFeed',  function ($rootScope, $scope, $http, sel
             //return $scope.twitts;
           //  $scope.$apply();
         }
+
+        $scope.$watch("prioritytwitts", function(){
+
+        if($scope.prioritytwitts.length < 5 && $scope.prioritytwitts.length >0) { console.log("less than 5"); $scope.loadImages();}
+        }, true);
 
         $scope.loadImages = function()
         {
@@ -270,6 +296,25 @@ proApp.controller('NewUsersTweetFeed',  function ($rootScope, $scope, $http, sel
        });
 
 
+           $scope.dismissTweet = function(tweet)
+        {
+               console.log("Trying to dismiss tweet "+tweet.text);
+               $http.get('/dismisstweet?id='+tweet.id_str+"&sec=new").success(function(data)
+                { 
+                  console.log("dismissed "+data) 
+
+                      for(t in $scope.newusertwitts)
+                     {
+                        if($scope.newusertwitts[t].id_str == tweet.id_str)
+                        {
+                             $scope.newusertwitts.splice($scope.newusertwitts.indexOf($scope.newusertwitts[t]),1);
+                        }
+                    }
+
+                } );
+        }
+
+
         $scope.setMaster = function(section)
         {
           selectionService.addTweet(section);
@@ -283,6 +328,13 @@ proApp.controller('NewUsersTweetFeed',  function ($rootScope, $scope, $http, sel
             //return $scope.twitts;
           //  $scope.$apply();
         }
+
+
+        $scope.$watch("newusertwitts", function(){
+
+        if($scope.newusertwitts.length < 5 && $scope.newusertwitts.length >0) { console.log("less than 5"); $scope.loadImages();}
+        }, true);
+
 
         $scope.loadImages = function()
         {
@@ -331,6 +383,8 @@ proApp.controller('NewUsersTweetFeed',  function ($rootScope, $scope, $http, sel
 
 proApp.controller('TweetFeed',  function ($rootScope, $scope, $http, selectionService) 
 {
+  $scope.twitts = [];
+
   var currenttime = new Date().getTime();
   $http.get('/setupunattendedtweets').success(function(data) 
   {
@@ -382,6 +436,24 @@ proApp.controller('TweetFeed',  function ($rootScope, $scope, $http, selectionSe
     })
 
 
+    $scope.dismissTweet = function(tweet)
+    {
+           console.log("Trying to dismiss tweet "+tweet.text);
+           $http.get('/dismisstweet?id='+tweet.id_str+"&sec=all").success(function(data)
+            { 
+              console.log("dismissed "+data) 
+
+                  for(t in $scope.twitts)
+                 {
+                    if($scope.twitts[t].id_str == tweet.id_str)
+                    {
+                         $scope.twitts.splice($scope.twitts.indexOf($scope.twitts[t]),1);
+                    }
+                }
+
+            } );
+    }
+
     $scope.setMaster = function(section)
     {
     selectionService.addTweet(section);
@@ -396,6 +468,12 @@ proApp.controller('TweetFeed',  function ($rootScope, $scope, $http, selectionSe
         //return $scope.twitts;
       //  $scope.$apply();
      }
+
+     $scope.$watch("twitts", function(){
+
+         if($scope.twitts.length < 5 && $scope.twitts.length >0) { console.log("less than 5"); $scope.loadImages();}
+    }, true);
+    
 
     
     $scope.loadImages = function()
@@ -591,10 +669,28 @@ proApp.controller('ReplyController', function($scope,$http,selectionService)
       }
       else
       {
-        $scope.user.name = $scope.tweet.user.screen_name;
+       // $scope.user.name = $scope.tweet.user.screen_name;
       }
 
     });
+
+
+   $scope.clearview = function(user)
+   {
+    $scope.user = { message:"" , name:"" , replytoid:null};
+    $('#contactForm').trigger("reset");
+     $('#remaining').html( '139 characters remaining');
+   // validateCharacters();
+
+
+    // $scope.user.name = "";
+    // $scope.user.message = "";
+    // $('#name').empty();
+    // $('#message').empty();
+    // $('#contactForm').trigger("reset");
+    console.log("View cleared!");
+
+   }
 
 
    $scope.update = function(user) 

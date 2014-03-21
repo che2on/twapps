@@ -82,28 +82,31 @@ html(ng-app='proApp')
                           #red.tab-pane.active(ng-controller='TweetFeed' when-scrolled="loadImages()")
                             div(class="list-group" style="margin-bottom:0px;" )
                             div(ng-repeat="t in twitts |  orderBy:'time':true ") 
-                              .row(ng-click="setMaster(t)")
+                              .row()
                                   a(class="list-group-item" style="height:120px; margin-bottom:5px;" )
                                       img(ng-src="{{t.user.profile_image_url}}" class="pull-left pull-center" style="margin:20px;")
-                                      button.btn.btn-primary.pull-right(type='submit' class="pull-right pull-center") Reply
+                                      button.btn.btn-primary.pull-right(type='submit' class="pull-right pull-center" ng-click="setMaster(t)" ) Reply
+                                      button.btn.btn-primary.pull-right(type='submit' class="pull-right pull-center" ng-click="dismissTweet(t)") Dismiss
                                       h4(class="list-group-item-heading") {{t.user.screen_name}}
                                       p(class="list-group-item-text") {{t.text}}   
                           #orange.tab-pane(ng-controller='PriorityTweetFeed' when-scrolled="loadImages()")
                             div(class="list-group" style="margin-bottom:0px;" )
                             div(ng-repeat="t in prioritytwitts" ng-show="t.hasOwnProperty('priority')") 
-                              .row(ng-click="setMaster(t)")
+                              .row()
                                   a(class="list-group-item" style="height:120px; margin-bottom:5px;" )
                                       img(ng-src="{{t.user.profile_image_url}}" class="pull-left pull-center" style="margin:20px;")
-                                      button.btn.btn-primary.pull-right(type='submit' class="pull-right pull-center") Reply
+                                      button.btn.btn-primary.pull-right(type='submit' class="pull-right pull-center" ng-click="setMaster(t)") Reply
+                                      button.btn.btn-primary.pull-right(type='submit' class="pull-right pull-center" ng-click="dismissTweet(t)") Dismiss
                                       h4(class="list-group-item-heading") {{t.user.screen_name}}
                                       p(class="list-group-item-text") {{t.text}}   
                           #yellow.tab-pane(ng-controller='NewUsersTweetFeed' when-scrolled="loadImages()")
                             div(class="list-group" style="margin-bottom:0px;" )
                             div(ng-repeat="t in newusertwitts" ) 
-                              .row(ng-click="setMaster(t)")
+                              .row()
                                   a(class="list-group-item" style="height:120px; margin-bottom:5px;" )
                                       img(ng-src="{{t.user.profile_image_url}}" class="pull-left pull-center" style="margin:20px;")
-                                      button.btn.btn-primary.pull-right(type='submit' class="pull-right pull-center") Reply
+                                      button.btn.btn-primary.pull-right(type='submit' class="pull-right pull-center" ng-click="setMaster(t)") Reply
+                                      button.btn.btn-primary.pull-right(type='submit' class="pull-right pull-center" ng-click="dismissTweet(t)") Dismiss
                                       h4(class="list-group-item-heading") {{t.user.screen_name}}
                                       p(class="list-group-item-text") {{t.text}}  
                           #green.tab-pane
@@ -138,12 +141,14 @@ html(ng-app='proApp')
                                             //
                                                For success/fail messages 
                                             br
+                                            
                                             button.btn.btn-primary.pull-right(type='submit' ng-click='update(user)') Reply
+                                            button.btn.btn-primary.pull-left(type='submit' ng-click='clearview(user)') Clear
                                             br
                   #column3.col-md-3(ng-controller='Templates')
                            div(class="list-group" style="margin-bottom:0px;")
                            div(ng-repeat="t in templates | orderBy:'template_name'") 
-                              .row(ng-click="setTemplate(t)")
+                              .row()
                                   a(class="list-group-item" style="margin-bottom:5px;")
                                       
                                       div(class="pull-right")
@@ -151,7 +156,7 @@ html(ng-app='proApp')
                                       div(class="list-group-item-text" style="overflow: hidden; text-overflow: ellipsis;") {{t.template_text}} 
                                       div(class="btn-group list-group-item-text" style="height:50px; margin-bottom:5px;")
                                         button.btn.btn-primary.launch-modal(data-toggle='modal', data-target='#myModal', ng-click="openModal(t)", class="pull-right pull-center") Edit
-                                        button.btn.btn-primary.launch-modal(class="pull-right pull-center") Use
+                                        button.btn.btn-primary.launch-modal(class="pull-right pull-center", ng-click="setTemplate(t)" ) Use
                            if dashdata.planStatus == "free"
                               .row
                                   a(class="list-group-item" style="margin-bottom:5px;")

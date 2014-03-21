@@ -15,6 +15,8 @@ var tweetscollection = DB.get('tweets');
 var unattendedcollection = DB.get('unattended');
 var prioritycollection = DB.get('priority');
 var newusertweetscollection = DB.get('newusers');
+var dismisscollection = DB.get('dismiss');
+var _ = require('underscore')._;
 
 
 /* establish the database connection */
@@ -27,6 +29,11 @@ var db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}),
   }
 });
 var accounts = db.collection('accounts');
+var _refdismisscollection = db.collection('dismiss');
+var ignored_all_collection = DB.get('ignored_all');
+var ignored_priority_collection = DB.get('ignored_priority');
+var ignored_new_collection = DB.get('ignored_new');
+
 
 exports.setCollectionNames = function(unique, callback)
 {
@@ -35,6 +42,12 @@ exports.setCollectionNames = function(unique, callback)
   unattendedcollection = DB.get(unique+'unattended_testing');
   prioritycollection = DB.get(unique+'priority');
   newusertweetscollection = DB.get(unique+'newusers');
+  _refdismisscollection = db.collection(unique+'dismiss');
+  dismisscollection = DB.get(unique+'dismiss');
+  var _refdismisscollection = db.collection('dismiss');
+  ignored_all_collection = DB.get(unique+'ignored_all');
+  ignored_priority_collection = DB.get(unique+'ignored_priority');
+  ignored_new_collection = DB.get(unique+'ignored_new');
   callback({status:"success"});
 }
 
@@ -57,6 +70,23 @@ exports.getReplyCounter = function(newData, callback)
     
 
   })
+}
+
+
+exports.isDismissed = function(id, sec, callback)
+{
+
+
+  if(sec=="all")
+  ignored_all_collection.findOne({ id_str: id }, function (err,doc) { callback(doc)});
+
+  if(sec=="priority")
+  ignored_priority_collection.findOne({ id_str: id }, function (err,doc) { callback(doc)});
+
+  if(sec=="new")
+  ignored_new_collection.findOne({ id_str: id }, function (err,doc) { callback(doc)});
+
+
 }
 
 exports.updatePlan = function(newData, planname, callback)
@@ -108,6 +138,16 @@ exports.getNextSetReplies = function(_time, callback)
 }
 
 
+function getAllDismissed(callback)
+{
+  dismisscollection.find({},function(err, docs)
+  {
+    callback(docs);
+
+  });
+
+}
+
 
 exports.getNextUnattended = function(_time, callback)
 {
@@ -122,6 +162,8 @@ exports.getNextUnattended = function(_time, callback)
   unattendedcollection.find( {time: {"$lt": _time}}, options, function(err,docs) 
   {
 
+      var senddata = [];
+
       if(err)
       {
             console.log("its over");
@@ -132,10 +174,11 @@ exports.getNextUnattended = function(_time, callback)
          // console.log(docs);
           for(var a in docs)
           {
-            console.log("wow");
-            
+            console.log("wow"); 
           }
-          callback(docs);
+
+           callback(docs);
+
       }
     
   });
@@ -295,8 +338,112 @@ exports.markAsAttended = function(tweetid, callback)
       if(err) { console.log("Couldn't removed"); callback(null);}
       else { console.log("remove"); callback(doc);}
 
+
+    });
+}
+
+
+exports.markAsAttended_priority = function(tweetid, callback)
+{
+
+  prioritycollection.ensureIndex( {"id_str":1}, {unique: true} );
+  var query = { id_str:tweetid};
+  prioritycollection.remove(query, function(err, doc)
+    {
+
+      if(err) { console.log("Couldn't removed"); callback(null);}
+      else { console.log("remove"); callback(doc);}
+
+
     });
 
+}
+
+
+exports.markAsAttended_new = function(tweetid, callback)
+{
+
+  newusertweetscollection.ensureIndex( {"id_str":1}, {unique: true} );
+  var query = { id_str:tweetid};
+  newusertweetscollection.remove(query, function(err, doc)
+    {
+
+      if(err) { console.log("Couldn't removed"); callback(null);}
+      else { console.log("remove"); callback(doc);}
+
+
+    });
+
+}
+
+
+
+
+
+
+exports.markAsDismissed = function(tweetid, sec,  callback)
+{
+
+
+  if(sec=="all")
+  {
+  ignored_all_collection.ensureIndex({"id_str":1}, {unique: true});
+  ignored_all_collection.insert({"id_str":tweetid}, function (err, doc) 
+                       {
+                         if (err) {
+
+                              callback(null);
+                                // If it failed, return error
+                                 //  res.send("There was a problem adding the information to the database.");
+                            }
+                        else {
+
+                            callback("success inserting");
+
+                        }
+                      });
+
+  }
+  else if(sec=="priority")
+  {
+      ignored_priority_collection.ensureIndex({"id_str":1}, {unique: true});
+      ignored_priority_collection.insert({"id_str":tweetid}, function (err, doc) 
+                       {
+                         if (err) {
+
+                              callback(null);
+                                // If it failed, return error
+                                 //  res.send("There was a problem adding the information to the database.");
+                            }
+                        else {
+
+                            callback("success inserting");
+
+                        }
+                      });
+
+
+  }
+  else if(sec=="new")
+  {
+          ignored_new_collection.ensureIndex({"id_str":1}, {unique: true});
+          ignored_new_collection.insert({"id_str":tweetid}, function (err, doc) 
+                       {
+                         if (err) {
+
+                              callback(null);
+                                // If it failed, return error
+                                 //  res.send("There was a problem adding the information to the database.");
+                            }
+                        else {
+
+                            callback("success inserting");
+
+                        }
+                      });
+
+
+  }
 
 }
 

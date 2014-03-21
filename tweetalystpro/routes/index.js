@@ -39,6 +39,51 @@ var streamArray = [];
 //   accept(null, true);
 // });
 
+
+exports.dismisstweet = function(req, res)
+{
+      if(req.query.id!=null)
+      {
+        if(req.query.sec == "all")
+        {
+          TM.markAsAttended(req.query.id, function(o)
+          {
+            TM.markAsDismissed(req.query.id,req.query.sec, function(o) { });
+            if(o!=null)
+            res.send("dismissed");
+
+
+          });
+        }
+        else if(req.query.sec == "priority" )
+        {
+
+          TM.markAsAttended_priority(req.query.id, function(o)
+          {
+            TM.markAsDismissed(req.query.id,req.query.sec, function(o) { });
+            if(o!=null)
+            res.send("dismissed");
+
+          });
+
+        }
+        else if(req.query.sec == "new" )
+        {
+           TM.markAsAttended_new(req.query.id, function(o)
+          {
+            TM.markAsDismissed(req.query.id,req.query.sec, function(o) { });
+            if(o!=null)
+            res.send("dismissed");
+
+          });
+
+
+        }
+
+      }
+}
+
+
 exports.verify = function(req, res)
 {
         if (req.session.oauth) {
@@ -60,8 +105,7 @@ exports.verify = function(req, res)
                 if (err) res.send(err, 500)
                 else res.send(data)
             });
-        }
-            
+        }   
 }
 exports.index = function (req, res)
  {
@@ -875,11 +919,6 @@ function calculateCelebrityFactor()
 function calculateImpactFactor()
 {
 
-  
-
-
-
-
 
 }
 
@@ -1132,6 +1171,7 @@ exports.setupunattendedtweets = function(req, res)
                       }
                     }
 
+
                      
 
                   });
@@ -1144,8 +1184,15 @@ exports.setupunattendedtweets = function(req, res)
                           if(_.contains(prioritylist, data[d].user.id_str))
                           {
                             data[d].priority =1;
-                            TM.markAsPriority(data[d], function(o)
+                            TM.isDismissed(data[d].id_str, "priority", function(ooo)
                             {
+                              if(ooo)
+                              { 
+                                TM.markAsPriority(data[d], function(o)
+                                {
+
+                                });
+                              }
 
                             });
                           }
@@ -1153,8 +1200,14 @@ exports.setupunattendedtweets = function(req, res)
                           if(_.contains(newuserslist, data[d].user.id_str))
                           {
                             data[d].newuser =1;
-                            TM.markAsNewUser(data[d], function(o)
+                            TM.isDismissed(data[d].id_str, "new", function(ooo)
                             {
+                              if(ooo)
+                              { 
+                                    TM.markAsNewUser(data[d], function(o)
+                                    {
+                                    });
+                              }
 
                             });
                           }
@@ -1172,8 +1225,18 @@ exports.setupunattendedtweets = function(req, res)
                         }
                         else
                         {
-                            TM.markAsUnattended(data[d], function(o)
+
+                            TM.isDismissed(data[d].id_str, "all", function(ooo)
                             {
+                              if(ooo) 
+                              {
+                                                            TM.markAsUnattended(data[d], function(o)
+                                                            {
+
+
+                                                            });
+
+                              }
 
                             });
 
