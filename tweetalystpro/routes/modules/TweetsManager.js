@@ -78,7 +78,7 @@ exports.isDismissed = function(id, sec, callback)
 
 
   if(sec=="all")
-  ignored_all_collection.findOne({ id_str: id }, function (err,doc) { callback(doc)});
+  ignored_all_collection.findOne({ id_str: id }, function (err,doc) { console.log("doc in dismissed is "+doc); console.log("err in dismissed is "+err); callback(doc);});
 
   if(sec=="priority")
   ignored_priority_collection.findOne({ id_str: id }, function (err,doc) { callback(doc)});
