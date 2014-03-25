@@ -611,30 +611,17 @@ proApp.controller('Templates', function($rootScope, $scope, $http, selectionServ
 
 proApp.controller('ReplyController', function($scope,$http,selectionService) 
 {
-
-     var text_max = 140;
-     var username_max = 0;
-     var text_remaining = 140;
-
     $scope.user = { message:"" , name:"" , replytoid:null};
     console.log("got this  "+selectionService.getTemplate());
     $scope.$on('someEvent', function(event, e)
     {
-          validateCharacters();
-
-     
     console.log("does it work? "+selectionService.getTemplate().template_text);
     $scope.template = selectionService.getTemplate();
     $scope.user.message = $scope.template.template_text;
-
-    
-
     });
 
     $scope.$on('someotherEvent', function(event, e)
     {
-         validateCharacters();
-
     console.log("does it work? "+selectionService.getTweet());
     $scope.tweet = selectionService.getTweet();
     $scope.user.replytoid = $scope.tweet.id_str;
@@ -699,16 +686,6 @@ proApp.controller('ReplyController', function($scope,$http,selectionService)
 
         // {name: name, replytoid: replytoid, message: message}
 
-         if(text_remaining < 0)
-        {
-                     $('#success').html("<div class='alert alert-danger'>");
-                     $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-                      .append( "</button>");
-                     $('#success > .alert-danger').append("<strong>Character limit exceeded. </strong>");
-                     $('#success > .alert-danger').append('</div>');
-                     return;
-        }
-
         var postData =user;
         $http({
         url: './posttweet',
@@ -729,7 +706,7 @@ proApp.controller('ReplyController', function($scope,$http,selectionService)
                   .append("<strong>Your message has been sent. </strong>");
         $('#success > .alert-success')
           .append('</div>');
-        //$('#contactForm').trigger("reset");
+        $('#contactForm').trigger("reset");
            // success
                        $('#messagebox').empty();
                       $('#messagebox').html("<div class='alert alert-danger'>");
@@ -751,105 +728,22 @@ proApp.controller('ReplyController', function($scope,$http,selectionService)
                      $('#success > .alert-danger').append("<strong>Sorry. Sending message failed. </strong>");
                      $('#success > .alert-danger').append('</div>');
                  //clear all fields
-                // $('#contactForm').trigger("reset");
+                 $('#contactForm').trigger("reset");
         }
     );
     }
 
-    $(document).ready(function() {
+     $(document).ready(function() {
+    var text_max = 140;
+    $('#remaining').html(text_max + ' characters remaining');
 
-      validateCharacters();
+    $('#message').keyup(function() {
+        var text_length = $('#message').val().length;
+        var text_remaining = text_max - text_length;
 
+        $('#remaining').html(text_remaining + ' characters remaining');
     });
-
-
-     function validateCharacters()
-     {  
-
-
-          console.log("Validating!");
-          username_max =  $('#name').val().length+1;
-                var text_length = $('#message').val().length;
-                text_remaining = text_max-username_max - text_length;;
-
-                $('#remaining').html(text_remaining + ' characters remaining');
-                $("#message").attr('maxlength',  text_max -username_max);
-
-                  if(text_remaining < 0)
-                  {
-                     $('#success').html("<div class='alert alert-danger'>");
-                     $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-                      .append( "</button>");
-                     $('#success > .alert-danger').append("<strong>Character limit exceeded. </strong>");
-                     $('#success > .alert-danger').append('</div>');
-                  }
-                  else
-                  {
-
-                     $('#success').empty();
-                  }
-
-
-              // $('#success').empty();
-             
-            // var text_max = 140;
-          //  $('#remaining').html(text_max + ' characters remaining');
-
-    }
-
-
-
-            $("#message, #name").keyup(function() {
-                username_max =  $('#name').val().length+1;
-                var text_length = $('#message').val().length;
-                text_remaining = text_max-username_max - text_length;;
-
-                $('#remaining').html(text_remaining + ' characters remaining');
-                $("#message").attr('maxlength',  text_max -username_max);
-
-                  if(text_remaining < 0)
-                  {
-                     $('#success').html("<div class='alert alert-danger'>");
-                     $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-                      .append( "</button>");
-                     $('#success > .alert-danger').append("<strong>Character limit exceeded. </strong>");
-                     $('#success > .alert-danger').append('</div>');
-                  }
-                  else
-                  {
-
-                     $('#success').empty();
-                  }
-            });
-
-            $( "#message, #name" ).change(function() {
-                username_max =  $('#name').val().length+1;
-                var text_length = $('#message').val().length;
-                text_remaining = text_max-username_max - text_length;
-
-                $('#remaining').html(text_remaining + ' characters remaining');
-                $("#message").attr('maxlength',  text_max -username_max);
-
-                  if(text_remaining < 0)
-                  {
-                     $('#success').html("<div class='alert alert-danger'>");
-                     $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-                      .append( "</button>");
-                     $('#success > .alert-danger').append("<strong>Character limit exceeded. </strong>");
-                     $('#success > .alert-danger').append('</div>');
-                  }
-
-                   else
-                  {
-
-                     $('#success').empty();
-                  }
-
-          // Check input( $( this ).val() ) for validity here
-        });   
-
-
-
+});
 
 });
 
