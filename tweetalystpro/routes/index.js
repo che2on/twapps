@@ -14,6 +14,7 @@ var db = monk('localhost:27017/protes');
 var collection; // = db.get('collection');
 var _ = require('underscore')._;
 var moment    = require('moment');
+var test = 0;
 
 
 var twitter = require('ntwitter');
